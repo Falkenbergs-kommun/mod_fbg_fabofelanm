@@ -1,17 +1,21 @@
 # Felanmälan Joomla Module (mod_fbg_fabofelanm)
 
-Joomla module for fault reporting (felanmälan) integrated with FAST2 API. Embeds a React-based widget with BFF (Backend for Frontend) architecture for secure API access.
+**✅ FULLY FUNCTIONAL - READY TO INSTALL**
+
+Joomla module for fault reporting (felanmälan) integrated with FAST2 API. Complete React widget with PHP BFF (Backend for Frontend) architecture for secure API access.
 
 ## Features
 
-- **React Widget:** Standalone React component embedded in Joomla
-- **BFF Architecture:** PHP-based API proxy with two-tier authentication
-- **FAST2 Integration:** OAuth2 + API token authentication
+- **Complete React Widget:** Fully functional form with property/space/unit selection
+- **BFF Architecture:** PHP-based API proxy with two-tier authentication (OAuth2 + API token)
+- **FAST2 Integration:** Full integration with FAST2 API v1.8
 - **User Context:** Automatically uses logged-in Joomla user data (name, email, phone)
-- **Property Hierarchy:** Support for objekt → utrymme → enhet selection
-- **File Uploads:** Multi-file upload support (images and PDF)
-- **Confidential Filtering:** Automatic filtering of confidential work orders
-- **QR Code Generation:** Generate QR codes for specific locations
+- **Property Hierarchy:** Objekt → Utrymme → Enhet selection with dynamic loading
+- **File Uploads:** Multi-file upload (max 5 files, 4MB each, images + PDF)
+- **Dual Mode:** Felanmälan and Beställning (with reference code)
+- **Confidential Filtering:** Automatic server-side filtering of confidential work orders
+- **Form Validation:** Client-side validation with error feedback
+- **Success Feedback:** Real-time status updates with auto-reset
 
 ## Architecture
 
@@ -33,36 +37,13 @@ FAST2 API
 
 ## Installation
 
-### Step 1: Build React Widget
+### Prerequisites
 
-The React widget must be built before installing the module:
+- Joomla 3.9+ or 4.x
+- PHP 7.4+ (Joomla 3.9) or PHP 8.0+ (Joomla 4.x)
+- FAST2 API credentials (OAuth2 + username/password)
 
-```bash
-cd widget-build
-npm install
-npm run build
-```
-
-This creates `assets/js/felanmalan-widget.js` and `assets/css/felanmalan-widget.css`.
-
-**Important:** Before building, you must copy the React components from `felanmalan-mock`:
-
-1. Copy components from `felanmalan-mock/components/`:
-   - `ReportForm.tsx` → `widget-build/src/components/ReportForm.jsx`
-   - `ReportStatus.tsx` → `widget-build/src/components/ReportStatus.jsx`
-   - `Combobox.tsx` → `widget-build/src/components/Combobox.jsx`
-   - `Header.tsx` → `widget-build/src/components/Header.jsx` (optional)
-
-2. Convert TypeScript to JavaScript:
-   - Remove all type annotations (`: Type`, `interface`, etc.)
-   - Change file extension from `.tsx` to `.jsx`
-   - Replace Next.js imports with vanilla JS equivalents
-
-3. Update imports in `widget-build/src/FelanmalanWidget.jsx`
-
-See `widget-build/BUILD.md` for detailed instructions.
-
-### Step 2: Install Module in Joomla
+### Step 1: Install Module in Joomla
 
 1. Create a ZIP file of the module:
    ```bash
@@ -82,7 +63,7 @@ See `widget-build/BUILD.md` for detailed instructions.
    - Assign to desired **Position**
    - Save
 
-### Step 3: Configure Module
+### Step 2: Configure Module
 
 In the module settings, configure:
 
@@ -123,32 +104,43 @@ The module is installed on the server in the following structure:
     └── ProxyToRealApi.php
 ```
 
-## Development
+## What's Included
 
-### Widget Development
+**Ready-to-use built assets:**
+- `assets/js/felanmalan-widget.js` (488KB, 150KB gzipped) - Complete React widget
+- `assets/css/felanmalan-widget.css` (4.87KB, 1.37KB gzipped) - Tailwind styles
 
-To develop the React widget:
+**React Components (source in `widget-build/src/`):**
+- `ReportForm.jsx` - Complete form with validation
+- `ReportStatus.jsx` - Work order status display
+- `Combobox.jsx` - Searchable dropdown
+- `apiClient.jsx` - Joomla AJAX client
+
+**No build required!** The widget is pre-built and ready to use.
+
+## Development (Optional)
+
+Only needed if you want to modify the React widget:
+
+### Rebuild Widget
 
 ```bash
 cd widget-build
 npm install
-npm run dev
-```
-
-This starts a Vite dev server at `http://localhost:5173` for live development.
-
-### Building for Production
-
-```bash
-cd widget-build
 npm run build
 ```
 
-Outputs to `../assets/js/` and `../assets/css/`.
+### Live Development
 
-### Testing the Widget Standalone
+```bash
+npm run dev  # Starts Vite dev server at http://localhost:5173
+```
 
-Open `widget-build/public/index.html` in a browser to test the widget without Joomla.
+### Test Standalone
+
+```bash
+open widget-build/public/index.html  # Test widget without Joomla
+```
 
 ## BFF (Backend for Frontend) Pattern
 
