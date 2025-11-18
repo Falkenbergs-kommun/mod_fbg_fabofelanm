@@ -37,7 +37,7 @@ $apiEndpoint = JUri::root() . 'index.php?option=com_ajax&module=fbg_fabofelanm&f
 
 // Get customer configuration
 $kundId = $params->get('kund_id', '296751');
-$kundNr = $params->get('kund_nr', 'SERVA10311');
+$kundNr = $params->get('kund_nr', 'SERVKOMMUN');
 
 // Include the template
 require JModuleHelper::getLayoutPath('mod_fbg_fabofelanm', $params->get('layout', 'default'));

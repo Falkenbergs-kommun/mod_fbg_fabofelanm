@@ -75,7 +75,7 @@ In the module settings, configure:
 - **FAST2 Username:** API username
 - **FAST2 Password:** API password
 - **Customer ID:** `296751` (numeric kundId for filtering objects)
-- **Customer Number:** `SERVA10311` (alphanumeric kundNr for work orders)
+- **Customer Number:** `SERVKOMMUN` (alphanumeric kundNr for work orders)
 
 **User Field Mapping:**
 - **Name Field:** `name` (default Joomla user name field)

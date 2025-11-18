@@ -89,7 +89,7 @@
                     type="text"
                     label="Customer Number"
                     description="FAST2 customer number for work orders (kundNr) - alphanumeric code"
-                    default="SERVA10311"
+                    default="SERVKOMMUN"
                     required="true"
                 />
             </fieldset>

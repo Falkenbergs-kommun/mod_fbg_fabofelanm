@@ -131,5 +131,5 @@ class ApiClient {
 export const apiClient = new ApiClient(
   window.location.origin + '/index.php?option=com_ajax&module=fbg_fabofelanm&format=json',
   '296751',      // Default kundId
-  'SERVA10311'   // Default kundNr
+  'SERVKOMMUN'   // Default kundNr
 );
