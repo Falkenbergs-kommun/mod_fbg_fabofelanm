@@ -19,7 +19,6 @@ window.FelanmalanWidget = {
    * @param {string} config.apiEndpoint - Joomla AJAX endpoint URL
    * @param {Object} config.userData - User data (name, email, phone)
    * @param {string} config.kundNr - Customer number
-   * @param {string} config.googleMapsApiKey - Google Maps API key (optional)
    */
   init: function(config) {
     const container = document.getElementById(config.containerId);
@@ -36,7 +35,6 @@ window.FelanmalanWidget = {
           apiEndpoint={config.apiEndpoint}
           userData={config.userData}
           kundNr={config.kundNr}
-          googleMapsApiKey={config.googleMapsApiKey}
         />
       </React.StrictMode>
     );

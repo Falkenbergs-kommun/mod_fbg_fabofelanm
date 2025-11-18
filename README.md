@@ -75,7 +75,6 @@ In the module settings, configure:
 - **FAST2 Username:** API username
 - **FAST2 Password:** API password
 - **Customer Number:** `SERVA10311` (or your kundNr)
-- **Google Maps API Key:** (optional)
 
 **User Field Mapping:**
 - **Name Field:** `name` (default Joomla user name field)

@@ -83,14 +83,6 @@
                     default="SERVA10311"
                     required="true"
                 />
-
-                <field
-                    name="google_maps_api_key"
-                    type="text"
-                    label="Google Maps API Key"
-                    description="Google Maps API Key for map integration (optional)"
-                    default=""
-                />
             </fieldset>
 
             <fieldset name="user_mapping" label="User Field Mapping">

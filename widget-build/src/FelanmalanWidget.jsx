@@ -3,7 +3,7 @@ import { ApiClientProvider } from './apiClient.jsx';
 import ReportForm from './components/ReportForm';
 import ReportStatus from './components/ReportStatus';
 
-export default function FelanmalanWidget({ apiEndpoint, userData, kundNr, googleMapsApiKey }) {
+export default function FelanmalanWidget({ apiEndpoint, userData, kundNr }) {
   const [workOrders, setWorkOrders] = useState([]);
   const [selectedObjekt, setSelectedObjekt] = useState(null);
 

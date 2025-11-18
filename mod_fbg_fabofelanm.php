@@ -35,8 +35,5 @@ $userData = ModFbgFabofelamnHelper::getUserData($params);
 // Build API endpoint URL
 $apiEndpoint = JUri::root() . 'index.php?option=com_ajax&module=fbg_fabofelanm&format=json';
 
-// Get Google Maps API key (optional)
-$googleMapsApiKey = $params->get('google_maps_api_key', '');
-
 // Include the template
 require JModuleHelper::getLayoutPath('mod_fbg_fabofelanm', $params->get('layout', 'default'));
