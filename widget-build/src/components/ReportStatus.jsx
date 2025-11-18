@@ -13,68 +13,73 @@ export default function ReportStatus({ workOrders, selectedObjekt }) {
 
   const getStatusColor = (status) => {
     const colorMap = {
-      'PAGAR': 'bg-blue-100 text-blue-800',
-      'REG': 'bg-yellow-100 text-yellow-800',
-      'GODK': 'bg-green-100 text-green-800',
-      'AVSL': 'bg-gray-100 text-gray-800'
+      'PAGAR': 'uk-badge uk-label-primary',
+      'REG': 'uk-badge uk-label-warning',
+      'GODK': 'uk-badge uk-label-success',
+      'AVSL': 'uk-badge'
     };
-    return colorMap[status] || 'bg-gray-100 text-gray-800';
+    return colorMap[status] || 'uk-badge';
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-6">Pågående ärenden</h2>
+    <div className="uk-card uk-card-default uk-card-body">
+      <h2 className="uk-heading-small uk-margin">Pågående ärenden</h2>
 
       {!selectedObjekt && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="uk-text-center uk-padding uk-text-muted">
           <p>Välj en fastighet för att se pågående ärenden</p>
         </div>
       )}
 
       {selectedObjekt && workOrders.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="uk-text-center uk-padding uk-text-muted">
           <p>Inga pågående ärenden för {selectedObjekt.namn}</p>
         </div>
       )}
 
       {selectedObjekt && workOrders.length > 0 && (
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600 mb-4">
+        <div>
+          <p className="uk-text-small uk-text-muted uk-margin">
             {workOrders.length} ärende{workOrders.length !== 1 ? 'n' : ''} för <strong>{selectedObjekt.namn}</strong>
           </p>
 
           {workOrders.map((order) => (
             <div
               key={order.arbetsorderId || order.id}
-              className="border border-gray-200 rounded-md p-4 hover:border-blue-300 transition-colors"
+              className="uk-card uk-card-default uk-card-body uk-card-hover uk-margin"
             >
-              <div className="flex justify-between items-start mb-2">
+              <div className="uk-flex uk-flex-between uk-flex-top uk-margin-small-bottom">
                 <div>
-                  <span className="font-semibold text-gray-900">
+                  <span className="uk-text-bold">
                     #{order.arbetsorderId || order.id}
                   </span>
                   {order.status && (
-                    <span className={`ml-2 text-xs px-2 py-1 rounded-full ${getStatusColor(order.status)}`}>
+                    <span className={`uk-margin-small-left ${getStatusColor(order.status)}`}>
                       {getStatusText(order.status)}
                     </span>
                   )}
                 </div>
                 {order.registreradDatum && (
-                  <span className="text-xs text-gray-500">
+                  <span className="uk-text-meta">
                     {new Date(order.registreradDatum).toLocaleDateString('sv-SE')}
                   </span>
                 )}
               </div>
 
               {order.beskrivning && (
-                <p className="text-sm text-gray-700 mt-2 line-clamp-3">
+                <p className="uk-text-small uk-margin-small-top" style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
+                }}>
                   {order.beskrivning}
                 </p>
               )}
 
               {order.arbetsordertypKod && (
-                <div className="mt-2">
-                  <span className="text-xs text-gray-500">
+                <div className="uk-margin-small-top">
+                  <span className="uk-text-meta">
                     {order.arbetsordertypKod === 'F' ? 'Felanmälan' : 'Beställning'}
                   </span>
                 </div>

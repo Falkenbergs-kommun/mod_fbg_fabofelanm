@@ -30,13 +30,13 @@ export default function Combobox({ label, options, value, onChange, placeholder,
   };
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="uk-inline uk-width-1-1">
       {label && (
-        <label className="block text-sm font-medium mb-1">
+        <label className="uk-form-label">
           {label}
         </label>
       )}
-      <div className="relative">
+      <div className="uk-inline uk-width-1-1">
         <input
           type="text"
           value={isOpen ? searchTerm : displayValue}
@@ -47,27 +47,39 @@ export default function Combobox({ label, options, value, onChange, placeholder,
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="uk-input"
         />
         <button
           type="button"
           onClick={() => !disabled && setIsOpen(!isOpen)}
           disabled={disabled}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
+          className="uk-position-center-right uk-margin-small-right uk-text-muted"
+          style={{background: 'none', border: 'none', cursor: disabled ? 'not-allowed' : 'pointer'}}
         >
           ▼
         </button>
       </div>
 
       {isOpen && filteredOptions.length > 0 && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+        <div className="uk-card uk-card-default uk-position-absolute uk-width-1-1 uk-margin-small-top" style={{zIndex: 1000, maxHeight: '15rem', overflowY: 'auto'}}>
           {filteredOptions.map((option) => (
             <div
               key={option.value}
               onClick={() => handleSelect(option.value)}
-              className={`px-3 py-2 cursor-pointer hover:bg-blue-50 ${
-                option.value === value ? 'bg-blue-100' : ''
+              className={`uk-padding-small ${
+                option.value === value ? 'uk-background-primary uk-light' : 'uk-background-default'
               }`}
+              style={{cursor: 'pointer'}}
+              onMouseEnter={(e) => {
+                if (option.value !== value) {
+                  e.currentTarget.classList.add('uk-background-muted');
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (option.value !== value) {
+                  e.currentTarget.classList.remove('uk-background-muted');
+                }
+              }}
             >
               {option.label}
             </div>
@@ -76,7 +88,7 @@ export default function Combobox({ label, options, value, onChange, placeholder,
       )}
 
       {isOpen && filteredOptions.length === 0 && searchTerm && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg p-3 text-sm text-gray-500">
+        <div className="uk-card uk-card-default uk-card-body uk-position-absolute uk-width-1-1 uk-margin-small-top uk-text-small uk-text-muted" style={{zIndex: 1000}}>
           Inga träffar
         </div>
       )}

@@ -1,20 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Felanmälan Widget Styles - UIkit 3 Compatible */
+/* UIkit 3 CSS is loaded by Joomla, so we only add minimal custom styles */
 
-/* Felanmälan Widget Styles */
 .felanmalan-widget {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  line-height: 1.5;
-  color: #1f2937;
+  /* Widget container - UIkit will handle most styling */
 }
 
-.felanmalan-widget * {
-  box-sizing: border-box;
-}
-
-/* Line clamp utility */
-.line-clamp-3 {
+/* Additional utilities not in UIkit */
+.uk-line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;

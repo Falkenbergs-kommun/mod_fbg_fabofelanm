@@ -323,23 +323,23 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
   }));
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-6">
+    <div className="uk-card uk-card-default uk-card-body">
+      <h2 className="uk-heading-small uk-margin">
         {orderType === 'felanmalan' ? 'Skapa felanmälan' : 'Skapa beställning'}
       </h2>
 
       {submitSuccess && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-md">
-          <div className="flex items-start">
-            <span className="text-2xl mr-3">✅</span>
+        <div className="uk-alert-success uk-margin" uk-alert>
+          <div className="uk-flex uk-flex-top">
+            <span className="uk-text-large uk-margin-small-right">✅</span>
             <div>
-              <h3 className="font-semibold text-green-800">
+              <h3 className="uk-text-bold">
                 {orderType === 'felanmalan' ? 'Felanmälan skickad!' : 'Beställning skickad!'}
               </h3>
-              <p className="text-sm text-green-700 mt-1">
+              <p className="uk-text-small uk-margin-small-top">
                 Ärendenummer: <strong>{workOrderNumber}</strong>
               </p>
-              <p className="text-sm text-green-600 mt-2">
+              <p className="uk-text-small uk-margin-small-top">
                 Formuläret rensas automatiskt om 5 sekunder...
               </p>
             </div>
@@ -348,19 +348,19 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       )}
 
       {submitError && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-          <div className="flex items-start">
-            <span className="text-2xl mr-3">❌</span>
+        <div className="uk-alert-danger uk-margin" uk-alert>
+          <div className="uk-flex uk-flex-top">
+            <span className="uk-text-large uk-margin-small-right">❌</span>
             <div>
-              <h3 className="font-semibold text-red-800">Fel vid inskickning</h3>
-              <p className="text-sm text-red-700 mt-1">{submitError}</p>
+              <h3 className="uk-text-bold">Fel vid inskickning</h3>
+              <p className="uk-text-small uk-margin-small-top">{submitError}</p>
             </div>
           </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
+      <form onSubmit={handleSubmit}>
+        <div className="uk-margin">
           <Combobox
             label="Objekt"
             options={objektOptions}
@@ -370,13 +370,13 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
             disabled={isLoadingObjekt}
           />
           {selectedObjekt && (
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="uk-text-small uk-text-muted uk-margin-small-top">
               📍 {getAddressString(selectedObjekt.adress)}
             </p>
           )}
         </div>
 
-        <div>
+        <div className="uk-margin">
           <Combobox
             label="Utrymme (valfritt)"
             options={utrymmesComboboxOptions}
@@ -392,7 +392,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
           />
         </div>
 
-        <div>
+        <div className="uk-margin">
           <Combobox
             label="Enhet (valfritt)"
             options={enheterOptionsList}
@@ -407,9 +407,9 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Beskrivning <span className="text-red-500">*</span>
+        <div className="uk-margin">
+          <label className="uk-form-label">
+            Beskrivning <span className="uk-text-danger">*</span>
           </label>
           <textarea
             value={description}
@@ -417,40 +417,40 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
             placeholder="Beskriv felet eller servicebehovet..."
             rows={4}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="uk-textarea"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-3">Typ av ärende</label>
-          <div className="flex gap-4">
-            <label className="flex items-center cursor-pointer">
+        <div className="uk-margin">
+          <label className="uk-form-label">Typ av ärende</label>
+          <div className="uk-flex uk-flex-middle" style={{gap: '1rem'}}>
+            <label>
               <input
                 type="radio"
                 value="felanmalan"
                 checked={orderType === 'felanmalan'}
                 onChange={(e) => setOrderType(e.target.value)}
-                className="w-4 h-4"
+                className="uk-radio"
               />
-              <span className="ml-2 text-sm">Felanmälan</span>
+              <span className="uk-text-small" style={{marginLeft: '0.5rem'}}>Felanmälan</span>
             </label>
-            <label className="flex items-center cursor-pointer">
+            <label>
               <input
                 type="radio"
                 value="bestallning"
                 checked={orderType === 'bestallning'}
                 onChange={(e) => setOrderType(e.target.value)}
-                className="w-4 h-4"
+                className="uk-radio"
               />
-              <span className="ml-2 text-sm">Beställning</span>
+              <span className="uk-text-small" style={{marginLeft: '0.5rem'}}>Beställning</span>
             </label>
           </div>
         </div>
 
         {orderType === 'bestallning' && (
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Referenskod <span className="text-red-500">*</span>
+          <div className="uk-margin">
+            <label className="uk-form-label">
+              Referenskod <span className="uk-text-danger">*</span>
             </label>
             <input
               type="text"
@@ -458,71 +458,71 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
               onChange={(e) => setRefCode(e.target.value)}
               placeholder="Ange referenskod"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="uk-input"
             />
           </div>
         )}
 
-        <div className="border border-gray-200 rounded-md p-4 bg-gray-50">
-          <p className="text-sm text-gray-600 mb-3">
+        <div className="uk-card uk-card-default uk-card-body uk-margin">
+          <p className="uk-text-small uk-text-muted uk-margin-small-bottom">
             ℹ️ Kontaktuppgifter
           </p>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Kontaktperson</label>
+          <div>
+            <div className="uk-margin">
+              <label className="uk-form-label">Kontaktperson</label>
               <input
                 type="text"
                 value={contactPerson}
                 onChange={(e) => setContactPerson(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="uk-input"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Telefon</label>
+            <div className="uk-margin">
+              <label className="uk-form-label">Telefon</label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="uk-input"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">E-post</label>
+            <div className="uk-margin">
+              <label className="uk-form-label">E-post</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="uk-input"
               />
             </div>
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Ladda upp filer (valfritt)</label>
+        <div className="uk-margin">
+          <label className="uk-form-label">Ladda upp filer (valfritt)</label>
           <input
             ref={fileInputRef}
             type="file"
             multiple
             accept="image/*,application/pdf"
             onChange={handleFileChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="uk-input"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="uk-text-meta uk-margin-small-top">
             Max 5 filer, 4MB per fil
           </p>
           {fileError && (
-            <p className="text-sm text-red-600 mt-2">⚠️ {fileError}</p>
+            <p className="uk-text-small uk-text-danger uk-margin-small-top">⚠️ {fileError}</p>
           )}
           {files.length > 0 && (
-            <div className="mt-3 space-y-2">
+            <div className="uk-margin-small-top">
               {files.map((file, index) => (
-                <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
-                  <span className="text-sm truncate">{file.name}</span>
+                <div key={index} className="uk-flex uk-flex-middle uk-flex-between uk-card uk-card-default uk-card-body uk-padding-small uk-margin-small-bottom">
+                  <span className="uk-text-small uk-text-truncate">{file.name}</span>
                   <button
                     type="button"
                     onClick={() => handleRemoveFile(index)}
-                    className="text-red-500 text-sm ml-2"
+                    className="uk-text-small uk-text-danger uk-margin-small-left"
                   >
                     Ta bort
                   </button>
@@ -532,28 +532,27 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
           )}
         </div>
 
-        <div className="border border-gray-200 rounded-md p-4 bg-gray-50">
-          <label className="flex items-start cursor-pointer">
+        <div className="uk-card uk-card-default uk-card-body uk-margin">
+          <label>
             <input
               type="checkbox"
               checked={isConfidential}
               onChange={(e) => setIsConfidential(e.target.checked)}
-              className="mt-1 w-4 h-4"
+              className="uk-checkbox"
             />
-            <div className="ml-3">
-              <span className="text-sm font-medium">Sekretessmarkera arbetsorder</span>
-              <p className="text-xs text-gray-500 mt-1">
-                Sekretessmarkerade ärenden filtreras bort från visningar
-              </p>
-            </div>
+            <span className="uk-text-small uk-text-bold uk-margin-small-left">Sekretessmarkera arbetsorder</span>
+            <p className="uk-text-meta uk-margin-small-top">
+              Sekretessmarkerade ärenden filtreras bort från visningar
+            </p>
           </label>
         </div>
 
-        <div className="flex gap-4">
+        <div className="uk-flex uk-margin" style={{gap: '1rem'}}>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 bg-pink-400 text-white py-3 px-6 rounded-md font-semibold hover:bg-pink-500 disabled:bg-gray-400"
+            className="uk-button uk-button-primary uk-width-expand"
+            style={{backgroundColor: '#f472b6'}}
           >
             {isSubmitting ? 'Skickar...' : (orderType === 'felanmalan' ? 'Skicka felanmälan' : 'Skicka beställning')}
           </button>
@@ -561,7 +560,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
             type="button"
             onClick={handleReset}
             disabled={isSubmitting}
-            className="px-6 py-3 border border-gray-300 rounded-md font-semibold hover:bg-gray-50"
+            className="uk-button uk-button-default"
           >
             Rensa
           </button>

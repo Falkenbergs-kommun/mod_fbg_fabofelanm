@@ -18,10 +18,16 @@ $app = Factory::getApplication();
 $document = $app->getDocument();
 $moduleBase = Uri::root(true) . '/modules/mod_fbg_fabofelanm';
 
-// Load React widget CSS
+// UIkit 3 is loaded by Joomla template, but we ensure it's loaded
+// Most Joomla templates include UIkit, but if needed, uncomment:
+// $document->addStyleSheet('https://cdn.jsdelivr.net/npm/uikit@3.21.0/dist/css/uikit.min.css');
+// $document->addScript('https://cdn.jsdelivr.net/npm/uikit@3.21.0/dist/js/uikit.min.js');
+// $document->addScript('https://cdn.jsdelivr.net/npm/uikit@3.21.0/dist/js/uikit-icons.min.js');
+
+// Load minimal custom widget styles
 $document->addStyleSheet($moduleBase . '/assets/css/felanmalan-widget.css');
 
-// Load React widget JavaScript (without defer to ensure it loads before inline script)
+// Load React widget JavaScript
 $document->addScript($moduleBase . '/assets/js/felanmalan-widget.js');
 
 // Prepare user data for JavaScript
