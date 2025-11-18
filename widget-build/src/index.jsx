@@ -18,7 +18,8 @@ window.FelanmalanWidget = {
    * @param {string} config.containerId - DOM element ID to render widget into
    * @param {string} config.apiEndpoint - Joomla AJAX endpoint URL
    * @param {Object} config.userData - User data (name, email, phone)
-   * @param {string} config.kundNr - Customer number
+   * @param {string} config.kundId - Customer ID (for listing objects)
+   * @param {string} config.kundNr - Customer number (for work orders)
    */
   init: function(config) {
     const container = document.getElementById(config.containerId);
@@ -34,6 +35,7 @@ window.FelanmalanWidget = {
         <FelanmalanWidget
           apiEndpoint={config.apiEndpoint}
           userData={config.userData}
+          kundId={config.kundId}
           kundNr={config.kundNr}
         />
       </React.StrictMode>

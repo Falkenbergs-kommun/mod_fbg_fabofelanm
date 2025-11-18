@@ -3,12 +3,12 @@ import { ApiClientProvider } from './apiClient.jsx';
 import ReportForm from './components/ReportForm';
 import ReportStatus from './components/ReportStatus';
 
-export default function FelanmalanWidget({ apiEndpoint, userData, kundNr }) {
+export default function FelanmalanWidget({ apiEndpoint, userData, kundId, kundNr }) {
   const [workOrders, setWorkOrders] = useState([]);
   const [selectedObjekt, setSelectedObjekt] = useState(null);
 
   return (
-    <ApiClientProvider apiEndpoint={apiEndpoint} kundNr={kundNr}>
+    <ApiClientProvider apiEndpoint={apiEndpoint} kundId={kundId} kundNr={kundNr}>
       <div className="felanmalan-widget">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <ReportForm

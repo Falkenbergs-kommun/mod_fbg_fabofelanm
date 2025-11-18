@@ -35,5 +35,9 @@ $userData = ModFbgFabofelamnHelper::getUserData($params);
 // Build API endpoint URL
 $apiEndpoint = JUri::root() . 'index.php?option=com_ajax&module=fbg_fabofelanm&format=json';
 
+// Get customer configuration
+$kundId = $params->get('kund_id', '296751');
+$kundNr = $params->get('kund_nr', 'SERVA10311');
+
 // Include the template
 require JModuleHelper::getLayoutPath('mod_fbg_fabofelanm', $params->get('layout', 'default'));

@@ -76,10 +76,19 @@
                 />
 
                 <field
+                    name="kund_id"
+                    type="text"
+                    label="Customer ID"
+                    description="FAST2 customer ID for filtering objects (kundId) - numeric value"
+                    default="296751"
+                    required="true"
+                />
+
+                <field
                     name="kund_nr"
                     type="text"
                     label="Customer Number"
-                    description="FAST2 customer number (kundNr)"
+                    description="FAST2 customer number for work orders (kundNr) - alphanumeric code"
                     default="SERVA10311"
                     required="true"
                 />

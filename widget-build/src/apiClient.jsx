@@ -12,8 +12,8 @@ const ApiClientContext = createContext(null);
 /**
  * Provider component to inject API configuration
  */
-export function ApiClientProvider({ children, apiEndpoint, kundNr }) {
-  const client = new ApiClient(apiEndpoint, kundNr);
+export function ApiClientProvider({ children, apiEndpoint, kundId, kundNr }) {
+  const client = new ApiClient(apiEndpoint, kundId, kundNr);
 
   return (
     <ApiClientContext.Provider value={client}>
@@ -37,9 +37,10 @@ export function useApiClient() {
  * API Client Class
  */
 class ApiClient {
-  constructor(apiEndpoint, kundNr) {
+  constructor(apiEndpoint, kundId, kundNr) {
     this.apiEndpoint = apiEndpoint;
-    this.kundNr = kundNr;
+    this.kundId = kundId;  // For listing objects
+    this.kundNr = kundNr;  // For creating work orders
   }
 
   /**
@@ -110,7 +111,7 @@ class ApiClient {
   async listObjekt() {
     return this.request('/ao-produkt/v1/fastastrukturen/objekt/felanmalningsbara/uthyrningsbara', 'POST', {
       filter: {
-        kundId: this.kundNr
+        kundId: this.kundId  // Use kundId (numeric) for filtering objects
       }
     });
   }
@@ -129,5 +130,6 @@ class ApiClient {
 // Export singleton for backward compatibility
 export const apiClient = new ApiClient(
   window.location.origin + '/index.php?option=com_ajax&module=fbg_fabofelanm&format=json',
-  'SERVA10311' // Default, should be overridden by provider
+  '296751',      // Default kundId
+  'SERVA10311'   // Default kundNr
 );

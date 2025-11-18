@@ -20,12 +20,10 @@ $document->addStyleSheet($moduleBase . '/assets/css/felanmalan-widget.css');
 // Load React widget JavaScript
 $document->addScript($moduleBase . '/assets/js/felanmalan-widget.js', [], ['defer' => true]);
 
-// Get customer number from params
-$kundNr = $params->get('kund_nr', 'SERVAKOMMUN');
-
 // Prepare user data for JavaScript
 $userDataJson = json_encode($userData);
 $apiEndpointJson = json_encode($apiEndpoint);
+$kundIdJson = json_encode($kundId);
 $kundNrJson = json_encode($kundNr);
 
 // Module class suffix
@@ -49,6 +47,7 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''));
                 containerId: 'felanmalan-container-<?php echo $module->id; ?>',
                 apiEndpoint: <?php echo $apiEndpointJson; ?>,
                 userData: <?php echo $userDataJson; ?>,
+                kundId: <?php echo $kundIdJson; ?>,
                 kundNr: <?php echo $kundNrJson; ?>
             });
         } else {
