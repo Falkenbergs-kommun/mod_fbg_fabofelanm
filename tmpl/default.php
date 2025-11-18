@@ -21,8 +21,8 @@ $moduleBase = Uri::root(true) . '/modules/mod_fbg_fabofelanm';
 // Load React widget CSS
 $document->addStyleSheet($moduleBase . '/assets/css/felanmalan-widget.css');
 
-// Load React widget JavaScript
-$document->addScript($moduleBase . '/assets/js/felanmalan-widget.js', [], ['defer' => true]);
+// Load React widget JavaScript (without defer to ensure it loads before inline script)
+$document->addScript($moduleBase . '/assets/js/felanmalan-widget.js');
 
 // Prepare user data for JavaScript
 $userDataJson = json_encode($userData);
@@ -44,19 +44,37 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''));
 
 <script>
 (function() {
+    var maxRetries = 50; // 5 seconds max
+    var retryCount = 0;
+
     // Wait for FelanmalanWidget to be loaded
     function initWidget() {
+        console.log('Checking for FelanmalanWidget...', typeof window.FelanmalanWidget);
+
         if (typeof window.FelanmalanWidget !== 'undefined') {
-            window.FelanmalanWidget.init({
-                containerId: 'felanmalan-container-<?php echo $module->id; ?>',
-                apiEndpoint: <?php echo $apiEndpointJson; ?>,
-                userData: <?php echo $userDataJson; ?>,
-                kundId: <?php echo $kundIdJson; ?>,
-                kundNr: <?php echo $kundNrJson; ?>
-            });
+            console.log('Initializing FelanmalanWidget');
+            try {
+                window.FelanmalanWidget.init({
+                    containerId: 'felanmalan-container-<?php echo $module->id; ?>',
+                    apiEndpoint: <?php echo $apiEndpointJson; ?>,
+                    userData: <?php echo $userDataJson; ?>,
+                    kundId: <?php echo $kundIdJson; ?>,
+                    kundNr: <?php echo $kundNrJson; ?>
+                });
+                console.log('FelanmalanWidget initialized successfully');
+            } catch (error) {
+                console.error('Error initializing widget:', error);
+            }
         } else {
-            // Retry after a short delay
-            setTimeout(initWidget, 100);
+            retryCount++;
+            if (retryCount < maxRetries) {
+                // Retry after a short delay
+                setTimeout(initWidget, 100);
+            } else {
+                console.error('FelanmalanWidget failed to load after ' + maxRetries + ' retries');
+                document.getElementById('felanmalan-container-<?php echo $module->id; ?>').innerHTML =
+                    '<div style="padding: 2rem; text-align: center; color: red;"><p>Fel: Kunde inte ladda felanmälan. Kontrollera konsollen för detaljer.</p></div>';
+            }
         }
     }
 
