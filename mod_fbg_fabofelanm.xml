@@ -10,9 +10,6 @@
     <version>1.0.0</version>
     <description>MOD_FBG_FABOFELANM_DESC</description>
 
-    <!-- Namespace for Joomla 5 -->
-    <namespace path="src">Joomla\Module\FbgFabofelanm\Site</namespace>
-
     <!-- Minimum Joomla version -->
     <minimumJoomla>4.0</minimumJoomla>
     <maximumJoomla>5.99</maximumJoomla>
