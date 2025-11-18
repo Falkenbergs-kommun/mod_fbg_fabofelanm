@@ -31,6 +31,8 @@ class ModFbgFabofelamnHelper
      */
     public static function proxyAjax()
     {
+        error_log('ModFbgFabofelamnHelper::proxyAjax() called');
+
         // Get request parameters
         $app = Factory::getApplication();
         $input = $app->input;
