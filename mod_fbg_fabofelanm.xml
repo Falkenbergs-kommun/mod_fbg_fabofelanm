@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.9" client="site" method="upgrade">
+    <name>MOD_FBG_FABOFELANM</name>
+    <author>Falkenbergs kommun</author>
+    <creationDate>November 2025</creationDate>
+    <copyright>Copyright (C) 2025 Falkenbergs kommun. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <authorEmail>it@falkenberg.se</authorEmail>
+    <authorUrl>https://kommun.falkenberg.se</authorUrl>
+    <version>1.0.0</version>
+    <description>MOD_FBG_FABOFELANM_DESC</description>
+
+    <files>
+        <filename module="mod_fbg_fabofelanm">mod_fbg_fabofelanm.php</filename>
+        <filename>helper.php</filename>
+        <folder>tmpl</folder>
+        <folder>lib</folder>
+        <folder>assets</folder>
+    </files>
+
+    <languages>
+        <language tag="sv-SE">language/sv-SE/sv-SE.mod_fbg_fabofelanm.ini</language>
+        <language tag="sv-SE">language/sv-SE/sv-SE.mod_fbg_fabofelanm.sys.ini</language>
+    </languages>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="fast2_base_url"
+                    type="text"
+                    label="FAST2 Base URL"
+                    description="Base URL for FAST2 API (e.g., https://klient-test.fabo.se:8243)"
+                    default="https://klient-test.fabo.se:8243"
+                    required="true"
+                />
+
+                <field
+                    name="oauth2_token_endpoint"
+                    type="text"
+                    label="OAuth2 Token Endpoint"
+                    description="OAuth2 token endpoint URL (leave empty to use {FAST2_BASE_URL}/oauth2/token)"
+                    default=""
+                />
+
+                <field
+                    name="consumer_key"
+                    type="text"
+                    label="Consumer Key"
+                    description="OAuth2 Consumer Key for WSO2 API Gateway"
+                    required="true"
+                />
+
+                <field
+                    name="consumer_secret"
+                    type="password"
+                    label="Consumer Secret"
+                    description="OAuth2 Consumer Secret for WSO2 API Gateway"
+                    required="true"
+                />
+
+                <field
+                    name="username"
+                    type="text"
+                    label="FAST2 Username"
+                    description="Username for FAST2 API authentication"
+                    required="true"
+                />
+
+                <field
+                    name="password"
+                    type="password"
+                    label="FAST2 Password"
+                    description="Password for FAST2 API authentication"
+                    required="true"
+                />
+
+                <field
+                    name="kund_nr"
+                    type="text"
+                    label="Customer Number"
+                    description="FAST2 customer number (kundNr)"
+                    default="SERVA10311"
+                    required="true"
+                />
+
+                <field
+                    name="google_maps_api_key"
+                    type="text"
+                    label="Google Maps API Key"
+                    description="Google Maps API Key for map integration (optional)"
+                    default=""
+                />
+            </fieldset>
+
+            <fieldset name="user_mapping" label="User Field Mapping">
+                <field
+                    name="user_name_field"
+                    type="text"
+                    label="Name Field"
+                    description="Joomla user field for name (e.g., 'name')"
+                    default="name"
+                />
+
+                <field
+                    name="user_email_field"
+                    type="text"
+                    label="Email Field"
+                    description="Joomla user field for email (e.g., 'email')"
+                    default="email"
+                />
+
+                <field
+                    name="user_phone_field"
+                    type="text"
+                    label="Phone Field"
+                    description="Joomla user field for phone (e.g., 'profile.phone' for custom field)"
+                    default="profile.phone"
+                />
+            </fieldset>
+
+            <fieldset name="advanced">
+                <field
+                    name="layout"
+                    type="modulelayout"
+                    label="JFIELD_ALT_LAYOUT_LABEL"
+                    description="JFIELD_ALT_MODULE_LAYOUT_DESC"
+                />
+
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
+                    label="JFIELD_MODULE_CLASS_SUFFIX_LABEL"
+                    description="JFIELD_MODULE_CLASS_SUFFIX_DESC"
+                    rows="3"
+                />
+
+                <field
+                    name="cache"
+                    type="list"
+                    label="JFIELD_CACHING_LABEL"
+                    description="JFIELD_CACHING_DESC"
+                    default="0"
+                >
+                    <option value="0">JGLOBAL_USE_GLOBAL</option>
+                    <option value="1">JGLOBAL_NO_CACHING</option>
+                </field>
+
+                <field
+                    name="cache_time"
+                    type="text"
+                    label="JFIELD_CACHE_TIME_LABEL"
+                    description="JFIELD_CACHE_TIME_DESC"
+                    default="900"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>

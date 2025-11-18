@@ -1,0 +1,40 @@
+/**
+ * Felanmälan Widget Styles
+ *
+ * Basic styles for the widget.
+ * TODO: Copy actual styles from felanmalan-mock or use Tailwind build
+ */
+
+.felanmalan-widget {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  line-height: 1.5;
+  color: #1f2937;
+}
+
+.felanmalan-widget * {
+  box-sizing: border-box;
+}
+
+/* Grid layout */
+.felanmalan-widget .grid {
+  display: grid;
+}
+
+.felanmalan-widget .grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 1024px) {
+  .felanmalan-widget .lg\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.felanmalan-widget .gap-8 {
+  gap: 2rem;
+}
+
+/*
+  TODO: Add more styles or integrate Tailwind CSS
+  Copy from felanmalan-mock/app/globals.css if using Tailwind
+*/

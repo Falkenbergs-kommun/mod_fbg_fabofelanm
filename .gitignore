@@ -1,0 +1,30 @@
+# Joomla
+*.log
+
+# PHP
+vendor/
+composer.lock
+
+# Assets (will be built)
+assets/js/felanmalan-widget.js
+assets/js/felanmalan-widget.css
+
+# Environment
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+node_modules/
+dist/
+build/
