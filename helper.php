@@ -22,10 +22,19 @@ require_once __DIR__ . '/lib/ProxyToRealApi.php';
 class ModFbgFabofelamnHelper
 {
     /**
-     * AJAX proxy handler
+     * AJAX proxy handler - Joomla 3/4 style
      * Called via: index.php?option=com_ajax&module=fbg_fabofelanm&method=proxy&format=json
      *
-     * Joomla 5 naming convention: method=proxy calls proxyAjax()
+     * @return array Response data
+     */
+    public static function getAjaxProxy()
+    {
+        return self::proxyAjax();
+    }
+
+    /**
+     * AJAX proxy handler - Joomla 5 style
+     * Called via: index.php?option=com_ajax&module=fbg_fabofelanm&method=proxy&format=json
      *
      * @return array Response data
      */
