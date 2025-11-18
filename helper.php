@@ -13,6 +13,10 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\Registry\Registry;
+
 require_once __DIR__ . '/lib/ProxyToRealApi.php';
 
 class ModFbgFabofelamnHelper
@@ -26,7 +30,7 @@ class ModFbgFabofelamnHelper
     public static function getAjaxProxy()
     {
         // Get request parameters
-        $app = JFactory::getApplication();
+        $app = Factory::getApplication();
         $input = $app->input;
 
         $path = $input->getString('path', '');
@@ -66,8 +70,8 @@ class ModFbgFabofelamnHelper
 
         try {
             // Get module parameters
-            $module = JModuleHelper::getModule('mod_fbg_fabofelanm');
-            $params = new JRegistry($module->params);
+            $module = ModuleHelper::getModule('mod_fbg_fabofelanm');
+            $params = new Registry($module->params);
 
             // Get API configuration
             $fast2BaseUrl = $params->get('fast2_base_url', '');
@@ -143,7 +147,8 @@ class ModFbgFabofelamnHelper
      */
     public static function getUserData($params)
     {
-        $user = JFactory::getUser();
+        $app = Factory::getApplication();
+        $user = $app->getIdentity();
 
         // Get field mappings from module parameters
         $nameField = $params->get('user_name_field', 'name');

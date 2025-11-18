@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="module" version="3.9" client="site" method="upgrade">
+<extension type="module" client="site" method="upgrade">
     <name>MOD_FBG_FABOFELANM</name>
     <author>Falkenbergs kommun</author>
     <creationDate>November 2025</creationDate>
@@ -9,6 +9,13 @@
     <authorUrl>https://kommun.falkenberg.se</authorUrl>
     <version>1.0.0</version>
     <description>MOD_FBG_FABOFELANM_DESC</description>
+
+    <!-- Namespace for Joomla 5 -->
+    <namespace path="src">Joomla\Module\FbgFabofelanm\Site</namespace>
+
+    <!-- Minimum Joomla version -->
+    <minimumJoomla>4.0</minimumJoomla>
+    <maximumJoomla>5.99</maximumJoomla>
 
     <files>
         <filename module="mod_fbg_fabofelanm">mod_fbg_fabofelanm.php</filename>

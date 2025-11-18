@@ -39,8 +39,8 @@ FAST2 API
 
 ### Prerequisites
 
-- Joomla 3.9+ or 4.x
-- PHP 7.4+ (Joomla 3.9) or PHP 8.0+ (Joomla 4.x)
+- Joomla 4.0+ or 5.x
+- PHP 8.0+ (Joomla 4.x) or PHP 8.1+ (Joomla 5.x)
 - FAST2 API credentials (OAuth2 + username/password)
 
 ### Step 1: Install Module in Joomla

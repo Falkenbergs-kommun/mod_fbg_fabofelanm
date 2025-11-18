@@ -10,6 +10,11 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
+
 // Load helper
 require_once __DIR__ . '/helper.php';
 
@@ -17,14 +22,15 @@ require_once __DIR__ . '/helper.php';
 $params = $module->params;
 
 // Get current user data
-$user = JFactory::getUser();
+$app = Factory::getApplication();
+$user = $app->getIdentity();
 $isLoggedIn = !$user->guest;
 
 if (!$isLoggedIn) {
     // Show login message if user not logged in
     echo '<div class="alert alert-warning">';
     echo '<p>Du måste vara inloggad för att rapportera fel.</p>';
-    echo '<a href="' . JRoute::_('index.php?option=com_users&view=login') . '" class="btn btn-primary">Logga in</a>';
+    echo '<a href="' . Route::_('index.php?option=com_users&view=login') . '" class="btn btn-primary">Logga in</a>';
     echo '</div>';
     return;
 }
@@ -33,11 +39,11 @@ if (!$isLoggedIn) {
 $userData = ModFbgFabofelamnHelper::getUserData($params);
 
 // Build API endpoint URL
-$apiEndpoint = JUri::root() . 'index.php?option=com_ajax&module=fbg_fabofelanm&format=json';
+$apiEndpoint = Uri::root() . 'index.php?option=com_ajax&module=fbg_fabofelanm&format=json';
 
 // Get customer configuration
 $kundId = $params->get('kund_id', '296751');
 $kundNr = $params->get('kund_nr', 'SERVKOMMUN');
 
 // Include the template
-require JModuleHelper::getLayoutPath('mod_fbg_fabofelanm', $params->get('layout', 'default'));
+require ModuleHelper::getLayoutPath('mod_fbg_fabofelanm', $params->get('layout', 'default'));

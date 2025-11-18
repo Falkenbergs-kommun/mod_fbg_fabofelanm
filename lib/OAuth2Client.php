@@ -11,6 +11,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 class OAuth2Client
 {
     /**
@@ -52,7 +54,8 @@ class OAuth2Client
      */
     public function getValidToken()
     {
-        $session = JFactory::getSession();
+        $app = Factory::getApplication();
+        $session = $app->getSession();
         $cachedToken = $session->get(self::SESSION_KEY);
 
         if ($cachedToken && !$this->isTokenExpired($cachedToken)) {
@@ -134,7 +137,8 @@ class OAuth2Client
      */
     public function clearTokenCache()
     {
-        $session = JFactory::getSession();
+        $app = Factory::getApplication();
+        $session = $app->getSession();
         $session->clear(self::SESSION_KEY);
     }
 }

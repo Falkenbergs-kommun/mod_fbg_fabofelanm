@@ -10,9 +10,13 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+
 // Load module assets
-$document = JFactory::getDocument();
-$moduleBase = JUri::root(true) . '/modules/mod_fbg_fabofelanm';
+$app = Factory::getApplication();
+$document = $app->getDocument();
+$moduleBase = Uri::root(true) . '/modules/mod_fbg_fabofelanm';
 
 // Load React widget CSS
 $document->addStyleSheet($moduleBase . '/assets/css/felanmalan-widget.css');

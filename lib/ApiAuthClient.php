@@ -11,6 +11,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+
 require_once __DIR__ . '/OAuth2Client.php';
 
 class ApiAuthClient
@@ -52,7 +54,8 @@ class ApiAuthClient
      */
     public function getValidApiToken()
     {
-        $session = JFactory::getSession();
+        $app = Factory::getApplication();
+        $session = $app->getSession();
         $cachedToken = $session->get(self::SESSION_KEY);
 
         if ($cachedToken && !$this->isApiTokenExpired($cachedToken)) {
@@ -142,7 +145,8 @@ class ApiAuthClient
      */
     public function clearApiTokenCache()
     {
-        $session = JFactory::getSession();
+        $app = Factory::getApplication();
+        $session = $app->getSession();
         $session->clear(self::SESSION_KEY);
     }
 }
