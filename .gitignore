@@ -5,9 +5,8 @@
 vendor/
 composer.lock
 
-# Assets (will be built)
-assets/js/felanmalan-widget.js
-assets/js/felanmalan-widget.css
+# Build artifacts from widget-build are pre-built and committed
+# No need to ignore built assets since server has no Node.js
 
 # Environment
 .env
