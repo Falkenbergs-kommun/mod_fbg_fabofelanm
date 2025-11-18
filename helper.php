@@ -25,9 +25,11 @@ class ModFbgFabofelamnHelper
      * AJAX proxy handler
      * Called via: index.php?option=com_ajax&module=fbg_fabofelanm&method=proxy&format=json
      *
+     * Joomla 5 naming convention: method=proxy calls proxyAjax()
+     *
      * @return array Response data
      */
-    public static function getAjaxProxy()
+    public static function proxyAjax()
     {
         // Get request parameters
         $app = Factory::getApplication();
