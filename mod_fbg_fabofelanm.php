@@ -37,7 +37,7 @@ if (!$isLoggedIn) {
 }
 
 // Get user data from helper
-$userData = ModFbgFabofelamnHelper::getUserData($params);
+$userData = ModFbgFabofelanmHelper::getUserData($params);
 
 // Build API endpoint URL
 $apiEndpoint = Uri::root() . 'index.php?option=com_ajax&module=fbg_fabofelanm&format=json';

@@ -19,7 +19,7 @@ use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/lib/ProxyToRealApi.php';
 
-class ModFbgFabofelamnHelper
+class ModFbgFabofelanmHelper
 {
     /**
      * TEST METHOD - Simple test to verify AJAX is working
