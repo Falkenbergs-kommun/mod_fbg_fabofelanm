@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
-use Joomla\CMS\Registry\Registry;
+use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/lib/ProxyToRealApi.php';
 
