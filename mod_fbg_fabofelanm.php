@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\Registry\Registry;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
@@ -19,7 +20,7 @@ use Joomla\CMS\Uri\Uri;
 require_once __DIR__ . '/helper.php';
 
 // Get module parameters
-$params = $module->params;
+$params = new Registry($module->params);
 
 // Get current user data
 $app = Factory::getApplication();
