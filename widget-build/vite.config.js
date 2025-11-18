@@ -14,7 +14,8 @@ export default defineConfig({
     rollupOptions: {
       external: [],
       output: {
-        globals: {}
+        globals: {},
+        assetFileNames: 'felanmalan-widget.css'
       }
     },
     outDir: '../assets/js',

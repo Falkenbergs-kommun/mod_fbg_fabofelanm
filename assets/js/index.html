@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Felanmälan Widget - Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f3f4f6;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #111827;
+      margin-bottom: 1rem;
+    }
+    .info {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Felanmälan Widget - Standalone Test</h1>
+
+    <div class="info">
+      <p><strong>Status:</strong> <span id="status">Loading...</span></p>
+      <p><strong>API Endpoint:</strong> <span id="endpoint">-</span></p>
+      <p><strong>User:</strong> <span id="user">-</span></p>
+    </div>
+
+    <div id="widget-container">
+      <div style="padding: 2rem; text-align: center; background: white; border-radius: 8px;">
+        <p>Laddar felanmälan widget...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load widget assets (will be created after build) -->
+  <link rel="stylesheet" href="../assets/css/felanmalan-widget.css">
+  <script src="../assets/js/felanmalan-widget.js"></script>
+
+  <script>
+    // Configuration
+    const config = {
+      containerId: 'widget-container',
+      // For testing, use the Next.js dev server or a mock endpoint
+      apiEndpoint: 'http://localhost:3000/api/bff',
+      userData: {
+        name: 'Test Användare',
+        email: 'test@falkenberg.se',
+        phone: '0346-88 60 00'
+      },
+      kundNr: 'SERVA10311',
+      googleMapsApiKey: '' // Optional
+    };
+
+    // Update info display
+    document.getElementById('endpoint').textContent = config.apiEndpoint;
+    document.getElementById('user').textContent = `${config.userData.name} (${config.userData.email})`;
+
+    // Initialize widget when loaded
+    function initWidget() {
+      if (typeof window.FelanmalanWidget !== 'undefined') {
+        document.getElementById('status').textContent = 'Widget loaded ✓';
+        document.getElementById('status').style.color = 'green';
+
+        try {
+          window.FelanmalanWidget.init(config);
+        } catch (error) {
+          document.getElementById('status').textContent = 'Error: ' + error.message;
+          document.getElementById('status').style.color = 'red';
+          console.error('Widget initialization error:', error);
+        }
+      } else {
+        document.getElementById('status').textContent = 'Widget not found (build not complete?)';
+        document.getElementById('status').style.color = 'orange';
+
+        // Retry after a delay
+        setTimeout(initWidget, 100);
+      }
+    }
+
+    // Start initialization
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initWidget);
+    } else {
+      initWidget();
+    }
+  </script>
+</body>
+</html>
