@@ -109,11 +109,40 @@ class ApiClient {
 
   // List objekt (properties)
   async listObjekt() {
-    return this.request('/ao-produkt/v1/fastastrukturen/objekt/felanmalningsbara/uthyrningsbara', 'POST', {
+    const data = await this.request('/ao-produkt/v1/fastastrukturen/objekt/felanmalningsbara/uthyrningsbara', 'POST', {
       filter: {
         kundId: this.kundId  // Use kundId (numeric) for filtering objects
       }
     });
+
+    // Transform GraphQL-style response to our format
+    if (data.edges && Array.isArray(data.edges)) {
+      return {
+        objekt: data.edges.map((edge) => {
+          const node = edge.node;
+
+          // Transform real API format to match our Objekt interface
+          return {
+            id: node.id,
+            objektNr: node.id, // Use ID as objektNr
+            namn: node.adress?.adress || 'Okänd fastighet', // Use street address as name
+            adress: node.adress,
+            lat: 0, // Coordinates not provided by real API for this endpoint
+            lng: 0,
+            kategori: node.typ?.objektsTyp?.toLowerCase() || 'ovrig',
+            fastighet: {
+              fastighetId: node.relationer?.fastighetNr || '',
+              fastighetNamn: `Fastighet ${node.relationer?.fastighetNr || ''}`
+            },
+            xkoord: node.adress?.xkoord,
+            ykoord: node.adress?.ykoord
+          };
+        }),
+        pageInfo: data.pageInfo
+      };
+    }
+
+    return data;
   }
 
   // List utrymmen (spaces)
