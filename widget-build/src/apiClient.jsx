@@ -104,7 +104,14 @@ class ApiClient {
   // List work orders for object
   async listWorkOrdersForObject(objektId) {
     const path = `/ao-produkt/v1/arbetsorder?objektId=${objektId}&status=PAGAR,REG,GODK&feltyp=F,U,T`;
-    return this.request(path, 'GET');
+    const response = await this.request(path, 'GET');
+
+    // PHP BFF wraps the response in { success, status, data }
+    // The actual work orders array is at response.data
+    const data = response.data || response;
+
+    // Return the array directly (BFF already filters confidential work orders)
+    return Array.isArray(data) ? data : [];
   }
 
   // List objekt (properties)
