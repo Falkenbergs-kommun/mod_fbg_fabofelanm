@@ -109,11 +109,15 @@ class ApiClient {
 
   // List objekt (properties)
   async listObjekt() {
-    const data = await this.request('/ao-produkt/v1/fastastrukturen/objekt/felanmalningsbara/uthyrningsbara', 'POST', {
+    const response = await this.request('/ao-produkt/v1/fastastrukturen/objekt/felanmalningsbara/uthyrningsbara', 'POST', {
       filter: {
         kundId: this.kundId  // Use kundId (numeric) for filtering objects
       }
     });
+
+    // PHP BFF wraps the response in { success, status, data }
+    // So the actual API data is at response.data
+    const data = response.data || response;
 
     // Transform GraphQL-style response to our format
     if (data.edges && Array.isArray(data.edges)) {
