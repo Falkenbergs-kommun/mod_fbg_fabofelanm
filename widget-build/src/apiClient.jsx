@@ -151,12 +151,49 @@ class ApiClient {
 
   // List utrymmen (spaces)
   async listUtrymmen(objektId) {
-    return this.request(`/ao-produkt/v1/fastastrukturen/utrymmen?objektId=${objektId}`, 'GET');
+    const response = await this.request(`/ao-produkt/v1/fastastrukturen/utrymmen?objektId=${objektId}`, 'GET');
+
+    // PHP BFF wraps the response in { success, status, data }
+    const data = response.data || response;
+
+    // Transform real API response format to our format
+    // Real API returns: [{ id, beskrivning, rumsnummer, utrymmesTypKod }]
+    // We need: { utrymmen: [{ id, namn, objektId, typ }] }
+    if (Array.isArray(data)) {
+      return {
+        utrymmen: data.map((item) => ({
+          id: item.id.toString(),
+          namn: item.beskrivning || 'Okänt utrymme',
+          objektId: objektId,
+          typ: 'inomhus' // Default since real API doesn't distinguish
+        }))
+      };
+    }
+
+    return data;
   }
 
   // List enheter (units)
   async listEnheter(utrymmesId) {
-    return this.request(`/ao-produkt/v1/fastastrukturen/enheter?utrymmesId=${utrymmesId}`, 'GET');
+    const response = await this.request(`/ao-produkt/v1/fastastrukturen/enheter?utrymmesId=${utrymmesId}`, 'GET');
+
+    // PHP BFF wraps the response in { success, status, data }
+    const data = response.data || response;
+
+    // Transform real API response format to our format
+    // Real API returns: [{ id, beskrivning, enhetstypBesk, ... }]
+    // We need: { enheter: [{ id, namn, utrymmesId }] }
+    if (Array.isArray(data)) {
+      return {
+        enheter: data.map((item) => ({
+          id: item.id.toString(),
+          namn: item.beskrivning || 'Okänd enhet',
+          utrymmesId: utrymmesId
+        }))
+      };
+    }
+
+    return data;
   }
 }
 
