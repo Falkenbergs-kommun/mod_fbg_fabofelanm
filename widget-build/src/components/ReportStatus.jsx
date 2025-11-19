@@ -77,13 +77,18 @@ export default function ReportStatus({ workOrders, selectedObjekt }) {
                 </p>
               )}
 
-              {order.arbetsorderTyp?.arbetsordertypKod && (
-                <div className="uk-margin-small-top">
-                  <span className="uk-text-meta">
+              <div className="uk-margin-small-top uk-text-meta">
+                {order.arbetsorderTyp?.arbetsordertypKod && (
+                  <span className="uk-margin-small-right">
                     {order.arbetsorderTyp.arbetsordertypKod === 'F' ? 'Felanmälan' : 'Beställning'}
                   </span>
-                </div>
-              )}
+                )}
+                {order.registrerad?.registreradAv?.namn && (
+                  <span>
+                    • Anmälare: {order.registrerad.registreradAv.namn}
+                  </span>
+                )}
+              </div>
             </div>
           ))}
         </div>
