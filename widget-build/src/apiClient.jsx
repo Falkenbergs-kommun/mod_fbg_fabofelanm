@@ -44,9 +44,26 @@ class ApiClient {
   }
 
   /**
+   * Clear authentication cache and force re-login
+   */
+  async clearAuthCache() {
+    const url = new URL(this.apiEndpoint);
+    url.searchParams.set('method', 'clearAuthCache');
+
+    const response = await fetch(url.toString(), { method: 'POST' });
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to clear auth cache');
+    }
+
+    return result;
+  }
+
+  /**
    * Make a request to Joomla AJAX endpoint
    */
-  async request(path, method = 'GET', body = null) {
+  async request(path, method = 'GET', body = null, retryOnAuthError = true) {
     const url = new URL(this.apiEndpoint);
     url.searchParams.set('method', 'proxy');
     url.searchParams.set('path', path);
@@ -72,7 +89,16 @@ class ApiClient {
     const result = await response.json();
 
     if (!result.success) {
-      throw new Error(result.error || 'API request failed');
+      const error = result.error || 'API request failed';
+
+      // Check if it's an authentication error
+      if (retryOnAuthError && (error.includes('Invalid JWT token') || error.includes('Invalid Credentials') || error.includes('900901'))) {
+        // Clear auth cache and retry once
+        await this.clearAuthCache();
+        return this.request(path, method, body, false); // Retry without further retries
+      }
+
+      throw new Error(error);
     }
 
     return result.data;

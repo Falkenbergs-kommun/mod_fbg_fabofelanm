@@ -22,6 +22,29 @@ require_once __DIR__ . '/lib/ProxyToRealApi.php';
 class ModFbgFabofelanmHelper
 {
     /**
+     * Clear all cached authentication tokens and force re-login
+     * Call: index.php?option=com_ajax&module=fbg_fabofelanm&method=clearAuthCache&format=json
+     *
+     * @return array Response data
+     */
+    public static function getAjaxClearAuthCache()
+    {
+        $app = Factory::getApplication();
+        $session = $app->getSession();
+
+        // Clear OAuth2 token cache
+        $session->clear('mod_fbg_fabofelanm.oauth2_token');
+
+        // Clear API token cache
+        $session->clear('mod_fbg_fabofelanm.api_token');
+
+        return [
+            'success' => true,
+            'message' => 'Authentication cache cleared. Next request will trigger fresh login.',
+        ];
+    }
+
+    /**
      * AJAX proxy handler - Joomla 3/4 style
      * Called via: index.php?option=com_ajax&module=fbg_fabofelanm&method=proxy&format=json
      *
