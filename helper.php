@@ -22,19 +22,6 @@ require_once __DIR__ . '/lib/ProxyToRealApi.php';
 class ModFbgFabofelanmHelper
 {
     /**
-     * TEST METHOD - Simple test to verify AJAX is working
-     * Call: index.php?option=com_ajax&module=fbg_fabofelanm&method=test&format=json
-     */
-    public static function getAjaxTest()
-    {
-        return [
-            'success' => true,
-            'message' => 'TEST METHOD WORKS! AJAX handler is being called correctly.',
-            'timestamp' => date('Y-m-d H:i:s')
-        ];
-    }
-
-    /**
      * AJAX proxy handler - Joomla 3/4 style
      * Called via: index.php?option=com_ajax&module=fbg_fabofelanm&method=proxy&format=json
      *
@@ -53,8 +40,6 @@ class ModFbgFabofelanmHelper
      */
     public static function proxyAjax()
     {
-        error_log('ModFbgFabofelamnHelper::proxyAjax() called');
-
         // Get request parameters
         $app = Factory::getApplication();
         $input = $app->input;

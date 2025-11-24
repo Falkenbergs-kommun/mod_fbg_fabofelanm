@@ -55,10 +55,7 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''));
 
     // Wait for FelanmalanWidget to be loaded
     function initWidget() {
-        console.log('Checking for FelanmalanWidget...', typeof window.FelanmalanWidget);
-
         if (typeof window.FelanmalanWidget !== 'undefined') {
-            console.log('Initializing FelanmalanWidget');
             try {
                 window.FelanmalanWidget.init({
                     containerId: 'felanmalan-container-<?php echo $module->id; ?>',
@@ -67,7 +64,6 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''));
                     kundId: <?php echo $kundIdJson; ?>,
                     kundNr: <?php echo $kundNrJson; ?>
                 });
-                console.log('FelanmalanWidget initialized successfully');
             } catch (error) {
                 console.error('Error initializing widget:', error);
             }
