@@ -186,9 +186,11 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
       if (contactIsDifferent) {
         finalDescription += '\n\nOBS! Kontaktperson i ärendet är:\n';
-        if (contactPerson && contactPerson !== userData?.name) {
+        // Always include name if it exists
+        if (contactPerson) {
           finalDescription += `Namn: ${contactPerson}\n`;
         }
+        // Only include phone/email if different from default
         if (phone && phone !== userData?.phone) {
           finalDescription += `Telefon: ${cleanPhone(phone)}\n`;
         }
@@ -229,7 +231,12 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       }
 
       const workOrder = await apiClient.createWorkOrder(workOrderPayload);
-      const arbetsorderId = workOrder.arbetsorderId || workOrder.id;
+
+      // Handle both direct and nested response structures
+      const arbetsorderId = workOrder.arbetsorderId
+        || workOrder.id
+        || workOrder.data?.arbetsorderId
+        || workOrder.data?.id;
 
       setWorkOrderNumber(arbetsorderId);
       setSubmitSuccess(true);
