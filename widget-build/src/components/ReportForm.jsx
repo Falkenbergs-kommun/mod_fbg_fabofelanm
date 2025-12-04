@@ -186,11 +186,10 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
       if (contactIsDifferent) {
         finalDescription += '\n\nOBS! Kontaktperson i ärendet är:\n';
-        // Always include name if it exists
-        if (contactPerson) {
+        // Only include fields that differ from the logged-in user
+        if (contactPerson && contactPerson !== userData?.name) {
           finalDescription += `Namn: ${contactPerson}\n`;
         }
-        // Only include phone/email if different from default
         if (phone && phone !== userData?.phone) {
           finalDescription += `Telefon: ${cleanPhone(phone)}\n`;
         }
@@ -247,16 +246,28 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
           const uploadPromises = files.map(file => apiClient.uploadTempFile(file));
           const uploadResults = await Promise.all(uploadPromises);
 
+          // Build file attachment payload with proper field extraction
           const filePayload = {
-            fil: uploadResults.map(result => ({
-              filnamn: result.fileName,
-              typ: 'DOKEXTIMG'
-            }))
+            fil: uploadResults.map(result => {
+              // Handle various possible response structures
+              const fileName = result.fileName || result.filnamn || result.data?.fileName || result.data?.filnamn;
+
+              if (!fileName) {
+                console.error('Missing fileName in upload result:', result);
+                throw new Error('Filuppladdning misslyckades - filnamn saknas');
+              }
+
+              return {
+                filnamn: fileName,
+                typ: 'DOKEXTIMG'
+              };
+            })
           };
 
           await apiClient.attachFilesToWorkOrder(arbetsorderId, filePayload);
         } catch (error) {
           console.error('File upload failed:', error);
+          setSubmitError('Arbetsorder skapades men filuppladdning misslyckades: ' + error.message);
         }
       }
 
