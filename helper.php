@@ -258,7 +258,17 @@ class ModFbgFabofelanmHelper
 
         try {
             $result = $db->loadResult();
-            return $result ? $result : '';
+            
+            if ($result) {
+                // Try to decode JSON (Joomla stores profile values as JSON)
+                $decoded = json_decode($result);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    return $decoded;
+                }
+                return $result;
+            }
+            
+            return '';
         } catch (Exception $e) {
             return '';
         }
