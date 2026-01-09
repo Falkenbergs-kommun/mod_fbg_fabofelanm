@@ -120,7 +120,7 @@
                     type="text"
                     label="Phone Field"
                     description="Joomla user field for phone (e.g., 'profile.phone' for custom field)"
-                    default="profile.phone"
+                    default="profile.mobil"
                 />
             </fieldset>
 

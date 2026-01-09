@@ -196,11 +196,18 @@ class ModFbgFabofelanmHelper
         $emailField = $params->get('user_email_field', 'email');
         $phoneField = $params->get('user_phone_field', 'profile.mobil');
 
+        $phone = self::getUserField($user, $phoneField);
+
+        // Fallback: If phone is empty and the configured field was NOT profile.mobil, try profile.mobil
+        if (empty($phone) && $phoneField !== 'profile.mobil') {
+             $phone = self::getUserField($user, 'profile.mobil');
+        }
+
         // Get user data
         $userData = [
             'name' => self::getUserField($user, $nameField),
             'email' => self::getUserField($user, $emailField),
-            'phone' => self::getUserField($user, $phoneField),
+            'phone' => $phone,
         ];
 
         return $userData;
