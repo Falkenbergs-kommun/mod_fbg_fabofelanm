@@ -258,14 +258,7 @@ class ModFbgFabofelanmHelper
 
         try {
             $result = $db->loadResult();
-
-            if (!$result) {
-                return '';
-            }
-
-            // Joomla stores profile values as JSON-encoded strings
-            $decoded = json_decode($result);
-            return $decoded !== null ? (string) $decoded : $result;
+            return $result ? $result : '';
         } catch (Exception $e) {
             return '';
         }
