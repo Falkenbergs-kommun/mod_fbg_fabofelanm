@@ -162,7 +162,7 @@ class ApiClient {
           return {
             id: node.id,
             objektNr: node.id, // Use ID as objektNr
-            namn: node.adress?.adress || 'Okänd fastighet', // Use street address as name
+            namn: node.detalj?.anmarkning || node.adress?.adress || 'Okänd fastighet', // Use anmarkning, fallback to address
             adress: node.adress,
             lat: 0, // Coordinates not provided by real API for this endpoint
             lng: 0,
