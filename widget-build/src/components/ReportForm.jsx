@@ -444,13 +444,13 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
         <div className="uk-margin">
           <label className="uk-form-label">
-            Ange exakt plats: rum/avdelning/våning (t.ex. Klassrum 214, kök) <span className="uk-text-danger">*</span>
+            Ange exakt plats: <span className="uk-text-danger">*</span>
           </label>
           <input
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="T.ex. Klassrum 214, kök, personalrum våning 2"
+            placeholder="T.ex. Klassrum 214, personalrum våning 2"
             required
             className="uk-input"
           />
