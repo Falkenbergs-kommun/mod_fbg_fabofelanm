@@ -14,12 +14,10 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
   const [utrymmesOptions, setUtrymmesOptions] = useState([]);
   const [selectedUtrymmesId, setSelectedUtrymmesId] = useState('');
-  const [selectedUtrymme, setSelectedUtrymme] = useState(null);
   const [isLoadingUtrymmen, setIsLoadingUtrymmen] = useState(false);
 
   const [enheterOptions, setEnheterOptions] = useState([]);
   const [selectedEnhetId, setSelectedEnhetId] = useState('');
-  const [selectedEnhet, setSelectedEnhet] = useState(null);
   const [isLoadingEnheter, setIsLoadingEnheter] = useState(false);
 
   const [orderType, setOrderType] = useState('felanmalan');
@@ -52,7 +50,6 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
     } else {
       setUtrymmesOptions([]);
       setSelectedUtrymmesId('');
-      setSelectedUtrymme(null);
     }
   }, [selectedObjektId]);
 
@@ -63,7 +60,6 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
     } else {
       setEnheterOptions([]);
       setSelectedEnhetId('');
-      setSelectedEnhet(null);
     }
   }, [selectedUtrymmesId]);
 
@@ -237,12 +233,17 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
         workOrderPayload.externtNr = 'CONFIDENTIAL';
       }
 
-      if (selectedUtrymme?.id) {
-        workOrderPayload.utrymmesId = parseInt(selectedUtrymme.id);
+      if (selectedUtrymmesId) {
+        workOrderPayload.utrymme = {
+          id: parseInt(selectedUtrymmesId)
+        };
       }
 
-      if (selectedEnhet?.id) {
-        workOrderPayload.enhetsId = parseInt(selectedEnhet.id);
+      if (selectedEnhetId) {
+        workOrderPayload.enhet = {
+          id: parseInt(selectedEnhetId),
+          enhetsNotering: null
+        };
       }
 
       const workOrder = await apiClient.createWorkOrder(workOrderPayload);
@@ -309,9 +310,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
     setSelectedObjektId('');
     setSelectedObjekt(null);
     setSelectedUtrymmesId('');
-    setSelectedUtrymme(null);
     setSelectedEnhetId('');
-    setSelectedEnhet(null);
     setDescription('');
     setContactPerson(userData?.name || '');
     setPhone(userData?.phone || '');
@@ -333,7 +332,6 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
     const objekt = objektList.find(o => o.id === value);
     setSelectedObjekt(objekt);
     setSelectedUtrymmesId('');
-    setSelectedUtrymme(null);
 
     if (onObjektSelected && objekt) {
       onObjektSelected({ id: objekt.id, namn: objekt.namn });
