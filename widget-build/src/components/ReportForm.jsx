@@ -24,6 +24,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
   const [orderType, setOrderType] = useState('felanmalan');
   const [refCode, setRefCode] = useState('');
+  const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [contactPerson, setContactPerson] = useState(userData?.name || '');
   const [phone, setPhone] = useState(userData?.phone || '');
@@ -176,6 +177,11 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       return;
     }
 
+    if (!location.trim()) {
+      setSubmitError('Vänligen ange exakt plats');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError('');
     setSubmitSuccess(false);
@@ -188,7 +194,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
         phone !== userData?.phone ||
         email !== userData?.email;
 
-      let finalDescription = description;
+      let finalDescription = `${location.trim()}\n\n${description}`;
 
       if (orderType === 'bestallning' && refCode.trim()) {
         finalDescription += `\n\nReferenskod: ${refCode}`;
@@ -299,6 +305,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
   const handleReset = () => {
     setOrderType('felanmalan');
     setRefCode('');
+    setLocation('');
     setSelectedObjektId('');
     setSelectedObjekt(null);
     setSelectedUtrymmesId('');
@@ -437,6 +444,20 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
         <div className="uk-margin">
           <label className="uk-form-label">
+            Ange exakt plats: rum/avdelning/våning (t.ex. Klassrum 214, kök) <span className="uk-text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="T.ex. Klassrum 214, kök, personalrum våning 2"
+            required
+            className="uk-input"
+          />
+        </div>
+
+        <div className="uk-margin">
+          <label className="uk-form-label">
             Beskrivning <span className="uk-text-danger">*</span>
           </label>
           <textarea
@@ -493,7 +514,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
         <div className="uk-card uk-card-default uk-card-body uk-margin">
           <p className="uk-text-small uk-text-muted uk-margin-small-bottom">
-            ℹ️ Kontaktuppgifter
+            <span uk-icon="icon: info" uk-tooltip="title: Kontaktperson på plats (ditt namn förifyllt – ändra vid behov)"></span> Kontaktuppgifter
           </p>
           <div>
             <div className="uk-margin">
