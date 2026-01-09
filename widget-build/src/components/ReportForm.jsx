@@ -337,7 +337,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
   const objektOptions = objektList.map(o => ({
     value: o.id,
-    label: `${o.namn}${o.objektNr ? ` (${o.objektNr})` : ''}`
+    label: o.namn
   }));
 
   const utrymmesComboboxOptions = utrymmesOptions.map(u => ({
