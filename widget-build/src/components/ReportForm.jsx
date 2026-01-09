@@ -220,7 +220,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
         },
         anmalare: {
           namn: userData?.name || 'Okänd',
-          telefon: cleanPhone(userData?.phone || ''),
+          telefon: cleanPhone(phone),
           epostAdress: userData?.email || ''
         }
       };

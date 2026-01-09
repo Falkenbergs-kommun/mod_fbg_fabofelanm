@@ -194,7 +194,7 @@ class ModFbgFabofelanmHelper
         // Get field mappings from module parameters
         $nameField = $params->get('user_name_field', 'name');
         $emailField = $params->get('user_email_field', 'email');
-        $phoneField = $params->get('user_phone_field', 'profile.phone');
+        $phoneField = $params->get('user_phone_field', 'profile.mobil');
 
         // Get user data
         $userData = [
@@ -207,14 +207,20 @@ class ModFbgFabofelanmHelper
     }
 
     /**
-     * Get user field value (supports nested fields like profile.phone)
+     * Get user field value (supports nested fields like profile.mobil)
      *
      * @param JUser $user Joomla user object
-     * @param string $fieldPath Field path (e.g., 'name' or 'profile.phone')
+     * @param string $fieldPath Field path (e.g., 'name' or 'profile.mobil')
      * @return string Field value
      */
     private static function getUserField($user, $fieldPath)
     {
+        // If it's a profile field, fetch from database
+        if (strpos($fieldPath, 'profile.') === 0) {
+            return self::getUserProfileValue($user->id, $fieldPath);
+        }
+
+        // Otherwise, get directly from user object
         $parts = explode('.', $fieldPath);
         $value = $user;
 
@@ -229,5 +235,32 @@ class ModFbgFabofelanmHelper
         }
 
         return (string) $value;
+    }
+
+    /**
+     * Get user profile value from database
+     *
+     * @param int $userId User ID
+     * @param string $profileKey Profile key (e.g., 'profile.mobil')
+     * @return string Profile value or empty string
+     */
+    private static function getUserProfileValue($userId, $profileKey)
+    {
+        $db = Factory::getDbo();
+        $query = $db->getQuery(true);
+
+        $query->select($db->quoteName('profile_value'))
+            ->from($db->quoteName('#__user_profiles'))
+            ->where($db->quoteName('user_id') . ' = ' . (int) $userId)
+            ->where($db->quoteName('profile_key') . ' = ' . $db->quote($profileKey));
+
+        $db->setQuery($query);
+
+        try {
+            $result = $db->loadResult();
+            return $result ? $result : '';
+        } catch (Exception $e) {
+            return '';
+        }
     }
 }
