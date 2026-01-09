@@ -234,16 +234,11 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       }
 
       if (selectedUtrymmesId) {
-        workOrderPayload.utrymme = {
-          id: parseInt(selectedUtrymmesId)
-        };
+        workOrderPayload.utrymmesId = parseInt(selectedUtrymmesId);
       }
 
       if (selectedEnhetId) {
-        workOrderPayload.enhet = {
-          id: parseInt(selectedEnhetId),
-          enhetsNotering: null
-        };
+        workOrderPayload.enhetsId = parseInt(selectedEnhetId);
       }
 
       const workOrder = await apiClient.createWorkOrder(workOrderPayload);
