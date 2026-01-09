@@ -156,6 +156,16 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       return;
     }
 
+    if (!selectedUtrymmesId) {
+      setSubmitError('Vänligen välj ett utrymme');
+      return;
+    }
+
+    if (!selectedEnhetId) {
+      setSubmitError('Vänligen välj en enhet');
+      return;
+    }
+
     if (orderType === 'bestallning' && !refCode.trim()) {
       setSubmitError('Vänligen ange referenskod för beställning');
       return;
@@ -396,7 +406,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
         <div className="uk-margin">
           <Combobox
-            label="Utrymme (valfritt)"
+            label="Utrymme"
             options={utrymmesComboboxOptions}
             value={selectedUtrymmesId}
             onChange={setSelectedUtrymmesId}
@@ -412,7 +422,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
         <div className="uk-margin">
           <Combobox
-            label="Enhet (valfritt)"
+            label="Enhet"
             options={enheterOptionsList}
             value={selectedEnhetId}
             onChange={setSelectedEnhetId}
