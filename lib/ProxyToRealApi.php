@@ -20,6 +20,7 @@ class ProxyToRealApi
     private $fast2BaseUrl;
     private $oauth2Client;
     private $apiAuthClient;
+    private $logger;
 
     /**
      * Constructor
@@ -37,11 +38,13 @@ class ProxyToRealApi
         $consumerKey,
         $consumerSecret,
         $username,
-        $password
+        $password,
+        $logger = null
     ) {
         $this->fast2BaseUrl = $fast2BaseUrl;
         $this->oauth2Client = new OAuth2Client($oauth2TokenEndpoint, $consumerKey, $consumerSecret);
         $this->apiAuthClient = new ApiAuthClient($fast2BaseUrl, $this->oauth2Client, $username, $password);
+        $this->logger = $logger;
     }
 
     /**
@@ -158,11 +161,18 @@ class ProxyToRealApi
             $data = $decoded !== null ? $decoded : $responseBody;
         }
 
-        return [
+        $response = [
             'status' => $httpCode,
             'headers' => $this->parseHeaders($responseHeaders),
             'data' => $data,
         ];
+
+        // Log the request if logger is available
+        if ($this->logger && $this->shouldLogPath($path)) {
+            $this->logger->logRequest($path, $method, $body, $response);
+        }
+
+        return $response;
     }
 
     /**
@@ -237,5 +247,29 @@ class ProxyToRealApi
         }
 
         return $headers;
+    }
+
+    /**
+     * Check if path should be logged
+     * Only log work order creation and file uploads
+     *
+     * @param string $path API path
+     * @return bool
+     */
+    private function shouldLogPath($path)
+    {
+        $loggablePaths = [
+            '/ao-produkt/v1/arbetsorder',           // Create work order
+            '/ao-produkt/v1/filetransfer/tempfile', // Upload file
+            '/filer',                                // Attach files (substring match)
+        ];
+
+        foreach ($loggablePaths as $loggablePath) {
+            if (strpos($path, $loggablePath) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -158,6 +158,27 @@
                     description="JFIELD_CACHE_TIME_DESC"
                     default="900"
                 />
+
+                <field
+                    name="enable_logging"
+                    type="radio"
+                    label="Enable API Logging"
+                    description="Log API requests for work orders and file uploads to help with debugging"
+                    default="0"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field
+                    name="log_directory"
+                    type="text"
+                    label="Log Directory"
+                    description="Directory where log files will be saved"
+                    default="/home/httpd/fbg-intranet/joomlaextensions/fabofelanm/fabo_test"
+                    showon="enable_logging:1"
+                />
             </fieldset>
         </fields>
     </config>

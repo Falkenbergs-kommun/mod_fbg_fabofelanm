@@ -18,6 +18,7 @@ use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/lib/ProxyToRealApi.php';
+require_once __DIR__ . '/lib/ApiLogger.php';
 
 class ModFbgFabofelanmHelper
 {
@@ -128,6 +129,11 @@ class ModFbgFabofelanmHelper
                 $oauth2Endpoint = $fast2BaseUrl . '/oauth2/token';
             }
 
+            // Initialize logger if enabled
+            $enableLogging = $params->get('enable_logging', 0);
+            $logDirectory = $params->get('log_directory', '/home/httpd/fbg-intranet/joomlaextensions/fabofelanm/fabo_test');
+            $logger = new ApiLogger($enableLogging == 1, $logDirectory);
+
             // Create proxy instance
             $proxy = new ProxyToRealApi(
                 $fast2BaseUrl,
@@ -135,7 +141,8 @@ class ModFbgFabofelanmHelper
                 $consumerKey,
                 $consumerSecret,
                 $username,
-                $password
+                $password,
+                $logger
             );
 
             // Proxy the request
