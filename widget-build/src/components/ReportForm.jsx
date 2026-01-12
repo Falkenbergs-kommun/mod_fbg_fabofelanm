@@ -178,6 +178,11 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       return;
     }
 
+    if (!phone.trim()) {
+      setSubmitError('Vänligen ange telefonnummer');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError('');
     setSubmitSuccess(false);
@@ -506,8 +511,9 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
         )}
 
         <div className="uk-card uk-card-default uk-card-body uk-margin">
+          <h4 className="uk-card-title uk-margin-small-bottom">Kontaktuppgifter</h4>
           <p className="uk-text-small uk-text-muted uk-margin-small-bottom">
-            <span uk-icon="icon: info" uk-tooltip="title: Kontaktperson på plats (ditt namn förifyllt – ändra vid behov)"></span> Kontaktuppgifter
+            Kontaktperson på plats (ditt namn förifyllt – ändra vid behov)
           </p>
           <div>
             <div className="uk-margin">
@@ -520,12 +526,13 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
               />
             </div>
             <div className="uk-margin">
-              <label className="uk-form-label">Telefon</label>
+              <label className="uk-form-label">Telefon *</label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="uk-input"
+                required
               />
             </div>
             <div className="uk-margin">
