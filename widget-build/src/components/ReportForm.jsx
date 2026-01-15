@@ -73,6 +73,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
     const objektParam = urlParams.get('objekt');
     const utrymmesParam = urlParams.get('utrymme');
     const enhetParam = urlParams.get('enhet');
+    const locationParam = urlParams.get('plats');
 
     if (objektParam && !selectedObjektId) {
       const objektExists = objektList.find(o => o.id === objektParam);
@@ -88,6 +89,11 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
           sessionStorage.setItem('felanmalan_pending_enhet', enhetParam);
         }
       }
+    }
+
+    // Apply location from URL if present
+    if (locationParam && !location) {
+      setLocation(decodeURIComponent(locationParam));
     }
   }, [objektList]);
 
@@ -126,12 +132,13 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
   // Permalink generation
   useEffect(() => {
-    if (selectedObjektId || selectedUtrymmesId || selectedEnhetId) {
+    if (selectedObjektId || selectedUtrymmesId || selectedEnhetId || location) {
       const params = new URLSearchParams();
 
       if (selectedObjektId) params.set('objekt', selectedObjektId);
       if (selectedUtrymmesId) params.set('utrymme', selectedUtrymmesId);
       if (selectedEnhetId) params.set('enhet', selectedEnhetId);
+      if (location) params.set('plats', encodeURIComponent(location));
 
       const baseUrl = window.location.origin + window.location.pathname;
       const fullUrl = `${baseUrl}?${params.toString()}`;
@@ -140,7 +147,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
     } else {
       setPermalink('');
     }
-  }, [selectedObjektId, selectedUtrymmesId, selectedEnhetId]);
+  }, [selectedObjektId, selectedUtrymmesId, selectedEnhetId, location]);
 
   const loadObjektList = async () => {
     setIsLoadingObjekt(true);
