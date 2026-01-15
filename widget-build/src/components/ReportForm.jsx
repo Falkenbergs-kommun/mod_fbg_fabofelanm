@@ -34,6 +34,8 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
   const [submitError, setSubmitError] = useState('');
   const [workOrderNumber, setWorkOrderNumber] = useState('');
   const [isConfidential, setIsConfidential] = useState(false);
+  const [permalink, setPermalink] = useState('');
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -62,6 +64,83 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       setSelectedEnhetId('');
     }
   }, [selectedUtrymmesId]);
+
+  // URL parameter reading - Step 1: Apply objekt from URL
+  useEffect(() => {
+    if (objektList.length === 0) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const objektParam = urlParams.get('objekt');
+    const utrymmesParam = urlParams.get('utrymme');
+    const enhetParam = urlParams.get('enhet');
+
+    if (objektParam && !selectedObjektId) {
+      const objektExists = objektList.find(o => o.id === objektParam);
+
+      if (objektExists) {
+        handleObjektChange(objektParam);
+
+        // Save utrymme/enhet for later (wait for loading)
+        if (utrymmesParam) {
+          sessionStorage.setItem('felanmalan_pending_utrymme', utrymmesParam);
+        }
+        if (enhetParam) {
+          sessionStorage.setItem('felanmalan_pending_enhet', enhetParam);
+        }
+      }
+    }
+  }, [objektList]);
+
+  // URL parameter reading - Step 2: Apply utrymme after loading
+  useEffect(() => {
+    const pendingUtrymme = sessionStorage.getItem('felanmalan_pending_utrymme');
+
+    if (pendingUtrymme && utrymmesOptions.length > 0 && !selectedUtrymmesId) {
+      const utrymmesExists = utrymmesOptions.find(u => u.id === pendingUtrymme);
+
+      if (utrymmesExists) {
+        setSelectedUtrymmesId(pendingUtrymme);
+        sessionStorage.removeItem('felanmalan_pending_utrymme');
+      } else {
+        sessionStorage.removeItem('felanmalan_pending_utrymme');
+        sessionStorage.removeItem('felanmalan_pending_enhet');
+      }
+    }
+  }, [utrymmesOptions]);
+
+  // URL parameter reading - Step 3: Apply enhet after loading
+  useEffect(() => {
+    const pendingEnhet = sessionStorage.getItem('felanmalan_pending_enhet');
+
+    if (pendingEnhet && enheterOptions.length > 0 && !selectedEnhetId) {
+      const enhetExists = enheterOptions.find(e => e.id === pendingEnhet);
+
+      if (enhetExists) {
+        setSelectedEnhetId(pendingEnhet);
+        sessionStorage.removeItem('felanmalan_pending_enhet');
+      } else {
+        sessionStorage.removeItem('felanmalan_pending_enhet');
+      }
+    }
+  }, [enheterOptions]);
+
+  // Permalink generation
+  useEffect(() => {
+    if (selectedObjektId || selectedUtrymmesId || selectedEnhetId) {
+      const params = new URLSearchParams();
+
+      if (selectedObjektId) params.set('objekt', selectedObjektId);
+      if (selectedUtrymmesId) params.set('utrymme', selectedUtrymmesId);
+      if (selectedEnhetId) params.set('enhet', selectedEnhetId);
+
+      const baseUrl = window.location.origin + window.location.pathname;
+      const fullUrl = `${baseUrl}?${params.toString()}`;
+
+      setPermalink(fullUrl);
+    } else {
+      setPermalink('');
+    }
+  }, [selectedObjektId, selectedUtrymmesId, selectedEnhetId]);
 
   const loadObjektList = async () => {
     setIsLoadingObjekt(true);
@@ -318,6 +397,10 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
     setFiles([]);
     setFileError('');
     setIsConfidential(false);
+    sessionStorage.removeItem('felanmalan_pending_utrymme');
+    sessionStorage.removeItem('felanmalan_pending_enhet');
+    setPermalink('');
+    setCopySuccess(false);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -354,6 +437,36 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
     value: e.id,
     label: e.namn
   }));
+
+  const handleCopyPermalink = async () => {
+    try {
+      await navigator.clipboard.writeText(permalink);
+      setCopySuccess(true);
+
+      setTimeout(() => {
+        setCopySuccess(false);
+      }, 2000);
+    } catch (error) {
+      console.error('Failed to copy permalink:', error);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = permalink;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        setCopySuccess(true);
+        setTimeout(() => {
+          setCopySuccess(false);
+        }, 2000);
+      } catch (err) {
+        console.error('Fallback copy failed:', err);
+      }
+      document.body.removeChild(textArea);
+    }
+  };
 
   return (
     <div className="uk-card uk-card-default uk-card-body">
@@ -615,6 +728,34 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
           </button>
         </div>
       </form>
+
+      {permalink && (
+        <div className="uk-card uk-card-default uk-card-body uk-margin-top">
+          <h4 className="uk-card-title uk-text-small">Permalänk till detta val</h4>
+          <p className="uk-text-meta uk-margin-small-bottom">
+            Dela denna länk för att hjälpa andra att fylla i formuläret med samma val
+          </p>
+          <div className="uk-flex uk-flex-middle" style={{gap: '0.5rem'}}>
+            <input
+              type="text"
+              value={permalink}
+              readOnly
+              className="uk-input uk-form-small"
+              style={{fontFamily: 'monospace', fontSize: '0.85rem'}}
+              onClick={(e) => e.target.select()}
+            />
+            <button
+              type="button"
+              onClick={handleCopyPermalink}
+              className="uk-button uk-button-primary uk-button-small"
+              style={{backgroundColor: copySuccess ? '#32d296' : '#1e87f0', whiteSpace: 'nowrap'}}
+              title="Kopiera länk"
+            >
+              {copySuccess ? '✓ Kopierad!' : 'Kopiera'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
