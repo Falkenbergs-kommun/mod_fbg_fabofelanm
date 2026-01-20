@@ -305,7 +305,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
         arbetsordertypKod: orderType === 'felanmalan' ? 'F' : 'G',
         kundNr: kundNr || 'SERVA10311',
         objektId: selectedObjekt.id,
-        ursprung: '1',
+        ursprung: '1001',
         information: {
           beskrivning: finalDescription,
         },
