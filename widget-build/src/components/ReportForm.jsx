@@ -374,9 +374,48 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
         }
       }
 
-      // Reset form after 5 seconds
+      // Scroll to top and reload work orders to show new order
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Save current objekt before reset
+      const currentObjektId = selectedObjektId;
+      const currentObjekt = selectedObjekt;
+
+      // Reload work orders for current object to show the newly created order
+      if (currentObjektId) {
+        loadWorkOrdersForObject(currentObjektId);
+      }
+
+      // Reset form after 5 seconds but keep objekt selected
       setTimeout(() => {
-        handleReset();
+        // Reset all fields except objekt
+        setOrderType('felanmalan');
+        setRefCode('');
+        setLocation('');
+        setSelectedUtrymmesId('');
+        setSelectedEnhetId('');
+        setDescription('');
+        setContactPerson(userData?.name || '');
+        setPhone(userData?.phone || '');
+        setEmail(userData?.email || '');
+        setFiles([]);
+        setFileError('');
+        setIsConfidential(false);
+        sessionStorage.removeItem('felanmalan_pending_utrymme');
+        sessionStorage.removeItem('felanmalan_pending_enhet');
+
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+
+        // Keep objekt selected and reload work orders again
+        setSelectedObjektId(currentObjektId);
+        setSelectedObjekt(currentObjekt);
+        if (currentObjektId) {
+          loadWorkOrdersForObject(currentObjektId);
+        }
+
+        // Clear success message
         setSubmitSuccess(false);
         setWorkOrderNumber('');
       }, 5000);
