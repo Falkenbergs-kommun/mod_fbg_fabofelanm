@@ -244,7 +244,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       return;
     }
 
-    if (!selectedEnhetId) {
+    if (enheterOptions.length > 0 && !selectedEnhetId) {
       setSubmitError('Vänligen välj en enhet');
       return;
     }
@@ -305,7 +305,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
         arbetsordertypKod: orderType === 'felanmalan' ? 'F' : 'G',
         kundNr: kundNr || 'SERVA10311',
         objektId: selectedObjekt.id,
-        ursprung: '1',
+        ursprung: '9',
         information: {
           beskrivning: finalDescription,
         },
@@ -584,20 +584,22 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
           />
         </div>
 
-        <div className="uk-margin">
-          <Combobox
-            label="Enhet"
-            options={enheterOptionsList}
-            value={selectedEnhetId}
-            onChange={setSelectedEnhetId}
-            placeholder={
-              !selectedUtrymmesId ? "Välj utrymme först..." :
-              isLoadingEnheter ? "Laddar enheter..." :
-              "Välj enhet..."
-            }
-            disabled={!selectedUtrymmesId || isLoadingEnheter}
-          />
-        </div>
+        {enheterOptions.length > 0 && (
+          <div className="uk-margin">
+            <Combobox
+              label="Enhet"
+              options={enheterOptionsList}
+              value={selectedEnhetId}
+              onChange={setSelectedEnhetId}
+              placeholder={
+                !selectedUtrymmesId ? "Välj utrymme först..." :
+                isLoadingEnheter ? "Laddar enheter..." :
+                "Välj enhet..."
+              }
+              disabled={!selectedUtrymmesId || isLoadingEnheter}
+            />
+          </div>
+        )}
 
         <div className="uk-margin">
           <label className="uk-form-label">
