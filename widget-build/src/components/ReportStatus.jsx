@@ -101,6 +101,19 @@ export default function ReportStatus({ workOrders, selectedObjekt }) {
                   </span>
                 )}
               </div>
+
+              <div className="uk-text-right uk-margin-small-top">
+                <button
+                  className="uk-button uk-button-primary uk-button-small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOrderClick(order);
+                  }}
+                  aria-label={`Visa detaljer för ärende ${order.id}`}
+                >
+                  Visa detaljer
+                </button>
+              </div>
             </div>
           ))}
         </div>
