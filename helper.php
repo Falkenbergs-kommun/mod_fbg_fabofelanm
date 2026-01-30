@@ -148,6 +148,11 @@ class ModFbgFabofelanmHelper
             // Proxy the request
             $response = $proxy->proxyRequest($path, $httpMethod, $body);
 
+            // Save work order to local database if successfully created
+            if ($httpMethod === 'POST' && strpos($path, '/arbetsorder') !== false && strpos($path, '/bilagor') === false) {
+                self::saveWorkOrderToLocalDb($response, $logger);
+            }
+
             // Filter out confidential work orders from list responses
             if ($httpMethod === 'GET' && strpos($path, '/arbetsorder') !== false && is_array($response['data'])) {
                 $response['data'] = self::filterConfidentialWorkOrders($response['data']);
@@ -178,6 +183,65 @@ class ModFbgFabofelanmHelper
         return array_filter($workOrders, function($workOrder) {
             return !isset($workOrder['externtNr']) || $workOrder['externtNr'] !== 'CONFIDENTIAL';
         });
+    }
+
+    /**
+     * Save successfully created work order to local database
+     *
+     * @param array $response API response from FAST2
+     * @param ApiLogger $logger Logger instance for error logging
+     * @return void
+     */
+    private static function saveWorkOrderToLocalDb($response, $logger)
+    {
+        // Only save if response is successful (2xx status code)
+        if (!isset($response['status']) || $response['status'] < 200 || $response['status'] >= 300) {
+            return;
+        }
+
+        // Extract work order ID from response
+        $responseData = $response['data'] ?? null;
+        if (!is_array($responseData) || !isset($responseData['id']) || !is_numeric($responseData['id'])) {
+            return; // No valid ID in response, skip silently
+        }
+
+        $workOrderId = (int) $responseData['id'];
+
+        // Get current user
+        $user = Factory::getUser();
+        if ($user->guest) {
+            error_log('Cannot save work order to local DB: user not logged in');
+            return;
+        }
+
+        $userId = (int) $user->id;
+
+        // Insert into local database
+        try {
+            $db = Factory::getDbo();
+            $query = $db->getQuery(true);
+
+            $query
+                ->insert($db->quoteName('fbg_fabo_felanm'))
+                ->columns($db->quoteName(['id', 'user']))
+                ->values($workOrderId . ', ' . $userId);
+
+            $db->setQuery($query);
+            $db->execute();
+
+        } catch (Exception $e) {
+            // Log error but don't fail the request
+            error_log('Failed to save work order to local DB: ' . $e->getMessage());
+
+            // Also log via ApiLogger if available
+            if ($logger && method_exists($logger, 'logError')) {
+                $logger->logError('DB insert failed', [
+                    'workOrderId' => $workOrderId,
+                    'userId' => $userId,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
     }
 
     /**
