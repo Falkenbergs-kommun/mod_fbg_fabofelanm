@@ -221,10 +221,13 @@ class ModFbgFabofelanmHelper
             $db = Factory::getDbo();
             $query = $db->getQuery(true);
 
+            $columns = ['id', 'user'];
+            $values = [(int)$workOrderId, (int)$userId];
+
             $query
                 ->insert($db->quoteName('fbg_fabo_felanm'))
-                ->columns($db->quoteName(['id', 'user']))
-                ->values($workOrderId . ', ' . $userId);
+                ->columns($db->quoteName($columns))
+                ->values(implode(',', $values));
 
             $db->setQuery($query);
             $db->execute();
