@@ -201,11 +201,11 @@ class ModFbgFabofelanmHelper
 
         // Extract work order ID from response
         $responseData = $response['data'] ?? null;
-        if (!is_array($responseData) || !isset($responseData['id']) || !is_numeric($responseData['id'])) {
+        if (!is_array($responseData) || !isset($responseData['arbetsorderId']) || !is_numeric($responseData['arbetsorderId'])) {
             return; // No valid ID in response, skip silently
         }
 
-        $workOrderId = (int) $responseData['id'];
+        $workOrderId = (int) $responseData['arbetsorderId'];
 
         // Get current user
         $user = Factory::getUser();
