@@ -441,7 +441,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       };
 
       if (orderType === 'bestallning') {
-        workOrderPayload.fakturera = { faktureras: 'true' };
+        workOrderPayload.fakturera = { faktureras: 'false' };
       }
 
       if (isConfidential) {
