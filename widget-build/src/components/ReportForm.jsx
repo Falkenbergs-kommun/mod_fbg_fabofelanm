@@ -290,24 +290,39 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       return;
     }
 
-    const maxSize = 10 * 1024 * 1024; // 10MB for original files (will be compressed)
+    const maxImageSize = 20 * 1024 * 1024; // 20MB for images (will be compressed to ~1-2MB)
+    const maxPdfSize = 2 * 1024 * 1024; // 2MB for PDFs (not compressed)
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
 
     // Validate files before processing
     for (const file of selectedFiles) {
-      if (file.size > maxSize) {
-        setFileError(`Filen "${file.name}" är för stor (max 10MB)`);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
-        return;
-      }
+      // Check file type
       if (!allowedTypes.includes(file.type)) {
         setFileError(`Filen "${file.name}" har ogiltigt format`);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
         return;
+      }
+
+      // Check file size based on type
+      if (file.type === 'application/pdf') {
+        if (file.size > maxPdfSize) {
+          setFileError(`PDF-filen "${file.name}" är för stor (max 2MB för PDF)`);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+          return;
+        }
+      } else {
+        // Image files
+        if (file.size > maxImageSize) {
+          setFileError(`Bilden "${file.name}" är för stor (max 20MB)`);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+          return;
+        }
       }
     }
 
@@ -832,7 +847,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
             {isProcessingFiles
               ? '⏳ Bearbetar och komprimerar bilder...'
               : files.length < 5
-              ? `Lägg till filer (${files.length}/5) • Välj en eller flera • Bilder skalas automatiskt`
+              ? `Lägg till filer (${files.length}/5) • Bilder max 20MB, PDF max 2MB • Bilder komprimeras automatiskt`
               : 'Max antal filer uppnått (5/5)'}
           </p>
           {fileError && (
