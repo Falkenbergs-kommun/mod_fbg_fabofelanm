@@ -227,6 +227,15 @@ export default function ReportStatus({ workOrders, selectedObjekt }) {
                     </dd>
                   </>
                 )}
+
+                {selectedOrder.information?.atgard && (
+                  <>
+                    <dt className="uk-text-bold">Åtgärd</dt>
+                    <dd className="uk-margin-small-bottom" style={{ whiteSpace: 'pre-wrap' }}>
+                      {selectedOrder.information.atgard}
+                    </dd>
+                  </>
+                )}
               </dl>
             </div>
 
