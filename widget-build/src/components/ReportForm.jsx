@@ -29,6 +29,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
   const [email, setEmail] = useState(userData?.email || '');
   const [files, setFiles] = useState([]);
   const [fileError, setFileError] = useState('');
+  const [isProcessingFiles, setIsProcessingFiles] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -200,30 +201,138 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
     }
   };
 
-  const handleFileChange = (e) => {
+  /**
+   * Compress and resize image files to reduce upload size
+   * - Images: Resized to max 1920px, compressed to JPEG 85%
+   * - PDFs: Passed through unchanged
+   * - Max output size: 10MB (increased from 4MB for original)
+   */
+  const compressImage = (file) => {
+    return new Promise((resolve, reject) => {
+      // If it's a PDF, return as-is
+      if (file.type === 'application/pdf') {
+        resolve(file);
+        return;
+      }
+
+      // Only compress images
+      if (!file.type.startsWith('image/')) {
+        resolve(file);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          // Calculate new dimensions (max 1920px on longest side)
+          const MAX_SIZE = 1920;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height = (height * MAX_SIZE) / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width = (width * MAX_SIZE) / height;
+              height = MAX_SIZE;
+            }
+          }
+
+          // Create canvas and draw resized image
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert to blob with compression
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                reject(new Error('Image compression failed'));
+                return;
+              }
+
+              // Create new File object with original name
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+
+              resolve(compressedFile);
+            },
+            'image/jpeg',
+            0.85 // 85% quality
+          );
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileChange = async (e) => {
     const selectedFiles = Array.from(e.target.files || []);
     setFileError('');
 
-    if (selectedFiles.length > 5) {
-      setFileError('Max 5 filer kan laddas upp');
+    // Check if adding these files would exceed the limit
+    if (files.length + selectedFiles.length > 5) {
+      setFileError(`Max 5 filer kan laddas upp (du har redan ${files.length} filer)`);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       return;
     }
 
-    const maxSize = 4 * 1024 * 1024;
+    const maxSize = 10 * 1024 * 1024; // 10MB for original files (will be compressed)
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
 
+    // Validate files before processing
     for (const file of selectedFiles) {
       if (file.size > maxSize) {
-        setFileError(`Filen "${file.name}" är för stor (max 4MB)`);
+        setFileError(`Filen "${file.name}" är för stor (max 10MB)`);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
         return;
       }
       if (!allowedTypes.includes(file.type)) {
         setFileError(`Filen "${file.name}" har ogiltigt format`);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
         return;
       }
     }
 
-    setFiles(selectedFiles);
+    // Show processing indicator
+    setIsProcessingFiles(true);
+
+    try {
+      // Compress images (PDFs pass through unchanged)
+      const processedFiles = await Promise.all(
+        selectedFiles.map(file => compressImage(file))
+      );
+
+      // Add processed files to existing files
+      setFiles(prev => [...prev, ...processedFiles]);
+
+    } catch (error) {
+      console.error('File processing error:', error);
+      setFileError('Kunde inte bearbeta filen. Försök igen.');
+    } finally {
+      setIsProcessingFiles(false);
+      // Clear the input so the same file can be selected again if needed
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleRemoveFile = (index) => {
@@ -713,13 +822,17 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
           <input
             ref={fileInputRef}
             type="file"
-            multiple
             accept="image/*,application/pdf"
             onChange={handleFileChange}
             className="uk-input"
+            disabled={files.length >= 5 || isProcessingFiles}
           />
           <p className="uk-text-meta uk-margin-small-top">
-            Max 5 filer, 4MB per fil
+            {isProcessingFiles
+              ? '⏳ Bearbetar och komprimerar bilder...'
+              : files.length < 5
+              ? `Lägg till filer en i taget (${files.length}/5) • Bilder skalas automatiskt`
+              : 'Max antal filer uppnått (5/5)'}
           </p>
           {fileError && (
             <p className="uk-text-small uk-text-danger uk-margin-small-top">⚠️ {fileError}</p>
@@ -728,11 +841,17 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
             <div className="uk-margin-small-top">
               {files.map((file, index) => (
                 <div key={index} className="uk-flex uk-flex-middle uk-flex-between uk-card uk-card-default uk-card-body uk-padding-small uk-margin-small-bottom">
-                  <span className="uk-text-small uk-text-truncate">{file.name}</span>
+                  <div className="uk-flex uk-flex-column" style={{flex: 1, minWidth: 0}}>
+                    <span className="uk-text-small uk-text-truncate">{file.name}</span>
+                    <span className="uk-text-meta" style={{fontSize: '0.7rem'}}>
+                      {(file.size / 1024).toFixed(0)} KB
+                    </span>
+                  </div>
                   <button
                     type="button"
                     onClick={() => handleRemoveFile(index)}
                     className="uk-text-small uk-text-danger uk-margin-small-left"
+                    style={{flexShrink: 0}}
                   >
                     Ta bort
                   </button>
