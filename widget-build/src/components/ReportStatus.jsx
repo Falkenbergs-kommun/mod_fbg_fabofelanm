@@ -227,13 +227,6 @@ export default function ReportStatus({ workOrders, selectedObjekt }) {
                     </dd>
                   </>
                 )}
-
-                {selectedOrder.ursprung && (
-                  <>
-                    <dt className="uk-text-bold">Ursprung</dt>
-                    <dd className="uk-margin-small-bottom">{selectedOrder.ursprung}</dd>
-                  </>
-                )}
               </dl>
             </div>
 
