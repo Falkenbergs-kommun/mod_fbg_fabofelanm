@@ -822,6 +822,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
           <input
             ref={fileInputRef}
             type="file"
+            multiple
             accept="image/*,application/pdf"
             onChange={handleFileChange}
             className="uk-input"
@@ -831,7 +832,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
             {isProcessingFiles
               ? '⏳ Bearbetar och komprimerar bilder...'
               : files.length < 5
-              ? `Lägg till filer en i taget (${files.length}/5) • Bilder skalas automatiskt`
+              ? `Lägg till filer (${files.length}/5) • Välj en eller flera • Bilder skalas automatiskt`
               : 'Max antal filer uppnått (5/5)'}
           </p>
           {fileError && (
