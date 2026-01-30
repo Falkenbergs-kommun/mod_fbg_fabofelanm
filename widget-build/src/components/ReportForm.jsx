@@ -914,9 +914,9 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
       {permalink && (
         <div className="uk-card uk-card-default uk-card-body uk-margin-top">
-          <h4 className="uk-card-title uk-text-small">Permalänk till detta val</h4>
+          <h4 className="uk-card-title uk-text-small">Snabbval</h4>
           <p className="uk-text-meta uk-margin-small-bottom">
-            Dela denna länk för att hjälpa andra att fylla i formuläret med samma val
+            Spara eller dela länken om du ofta felanmäler samma objekt.
           </p>
           <div className="uk-flex uk-flex-middle" style={{gap: '0.5rem'}}>
             <input
