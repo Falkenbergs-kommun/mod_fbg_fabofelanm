@@ -640,7 +640,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
 
   return (
     <div className="uk-card uk-card-default uk-card-body">
-      <h2 className="uk-heading-small uk-margin">
+      <h2 className="uk-margin">
         {orderType === 'felanmalan' ? 'Skapa felanmälan' : 'Skapa beställning'}
       </h2>
 

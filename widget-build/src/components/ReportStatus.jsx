@@ -33,7 +33,7 @@ export default function ReportStatus({ workOrders, selectedObjekt }) {
 
   return (
     <div className="uk-card uk-card-default uk-card-body">
-      <h2 className="uk-heading-small uk-margin">Pågående ärenden</h2>
+      <h2 className="uk-margin">Pågående ärenden</h2>
 
       {!selectedObjekt && (
         <div className="uk-text-center uk-padding uk-text-muted">
