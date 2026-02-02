@@ -678,7 +678,7 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
       <form onSubmit={handleSubmit}>
         <div className="uk-margin">
           <Combobox
-            label="Objekt"
+            label="Objekt / Fastighet"
             options={objektOptions}
             value={selectedObjektId}
             onChange={handleObjektChange}
