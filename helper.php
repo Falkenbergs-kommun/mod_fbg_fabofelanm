@@ -46,6 +46,137 @@ class ModFbgFabofelanmHelper
     }
 
     /**
+     * AJAX handler to get current user's work orders - Joomla 3 style
+     * Called via: index.php?option=com_ajax&module=fbg_fabofelanm&method=myWorkOrders&format=json
+     *
+     * @return array Response data with user's work orders
+     */
+    public static function myWorkOrdersAjax()
+    {
+        return self::getMyWorkOrders();
+    }
+
+    /**
+     * AJAX handler to get current user's work orders - Joomla 4/5 style
+     * Called via: index.php?option=com_ajax&module=fbg_fabofelanm&method=myWorkOrders&format=json
+     *
+     * @return array Response data with user's work orders
+     */
+    public static function getAjaxMyWorkOrders()
+    {
+        return self::getMyWorkOrders();
+    }
+
+    /**
+     * Get work orders created by the current user from local DB and FAST2 API
+     *
+     * @return array Response data
+     */
+    private static function getMyWorkOrders()
+    {
+        $app = Factory::getApplication();
+        $user = $app->getIdentity();
+
+        // Check if user is logged in
+        if ($user->guest) {
+            return [
+                'success' => false,
+                'error' => 'User not logged in',
+            ];
+        }
+
+        $userId = (int) $user->id;
+
+        try {
+            // Get work order IDs from local database
+            $db = Factory::getDbo();
+            $query = $db->getQuery(true);
+
+            $query->select($db->quoteName('id'))
+                ->from($db->quoteName('fbg_fabo_felanm'))
+                ->where($db->quoteName('user') . ' = ' . $userId)
+                ->order($db->quoteName('id') . ' DESC');
+
+            $db->setQuery($query);
+            $workOrderIds = $db->loadColumn();
+
+            if (empty($workOrderIds)) {
+                return [
+                    'success' => true,
+                    'data' => [],
+                ];
+            }
+
+            // Get module parameters for API access
+            $module = ModuleHelper::getModule('mod_fbg_fabofelanm');
+            $params = new Registry($module->params);
+
+            $fast2BaseUrl = $params->get('fast2_base_url', '');
+            $oauth2Endpoint = $params->get('oauth2_token_endpoint', '');
+            $consumerKey = $params->get('consumer_key', '');
+            $consumerSecret = $params->get('consumer_secret', '');
+            $username = $params->get('username', '');
+            $password = $params->get('password', '');
+
+            if (empty($fast2BaseUrl) || empty($consumerKey) || empty($consumerSecret)) {
+                return [
+                    'success' => false,
+                    'error' => 'Module not configured',
+                ];
+            }
+
+            if (empty($oauth2Endpoint)) {
+                $oauth2Endpoint = $fast2BaseUrl . '/oauth2/token';
+            }
+
+            // Initialize logger and proxy
+            $enableLogging = $params->get('enable_logging', 0);
+            $logDirectory = $params->get('log_directory', '/home/httpd/fbg-intranet/joomlaextensions/fabofelanm/fabo_test');
+            $logger = new ApiLogger($enableLogging == 1, $logDirectory);
+
+            $proxy = new ProxyToRealApi(
+                $fast2BaseUrl,
+                $oauth2Endpoint,
+                $consumerKey,
+                $consumerSecret,
+                $username,
+                $password,
+                $logger
+            );
+
+            // Fetch work order details from FAST2 API
+            $workOrders = [];
+            foreach ($workOrderIds as $workOrderId) {
+                try {
+                    $response = $proxy->proxyRequest("/ao-produkt/v1/arbetsorder/{$workOrderId}", 'GET', null);
+
+                    if (isset($response['data']) && $response['status'] >= 200 && $response['status'] < 300) {
+                        // Filter out confidential work orders
+                        $workOrder = $response['data'];
+                        if (!isset($workOrder['externtNr']) || $workOrder['externtNr'] !== 'CONFIDENTIAL') {
+                            $workOrders[] = $workOrder;
+                        }
+                    }
+                } catch (Exception $e) {
+                    // Log error but continue with other work orders
+                    error_log("Failed to fetch work order {$workOrderId}: " . $e->getMessage());
+                }
+            }
+
+            return [
+                'success' => true,
+                'data' => $workOrders,
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * AJAX proxy handler - Joomla 3/4 style
      * Called via: index.php?option=com_ajax&module=fbg_fabofelanm&method=proxy&format=json
      *

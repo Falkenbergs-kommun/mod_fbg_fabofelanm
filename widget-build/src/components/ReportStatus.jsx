@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
-export default function ReportStatus({ workOrders, selectedObjekt }) {
+export default function ReportStatus({ workOrders, selectedObjekt, myWorkOrders }) {
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [activeTab, setActiveTab] = useState('ongoing'); // 'ongoing' or 'my'
 
   const getStatusText = (status) => {
     const statusMap = {
@@ -31,93 +32,144 @@ export default function ReportStatus({ workOrders, selectedObjekt }) {
     setSelectedOrder(null);
   };
 
+  const renderWorkOrderCard = (order) => (
+    <div
+      key={order.id}
+      className="uk-card uk-card-default uk-card-body uk-card-hover uk-margin"
+      onClick={() => handleOrderClick(order)}
+      style={{ cursor: 'pointer' }}
+    >
+      <div className="uk-flex uk-flex-between uk-flex-top uk-margin-small-bottom">
+        <div>
+          <span className="uk-text-bold">
+            #{order.id}
+          </span>
+          {order.status?.statusKod && (
+            <span className={`uk-margin-small-left ${getStatusColor(order.status.statusKod)}`}>
+              {getStatusText(order.status.statusKod)}
+            </span>
+          )}
+        </div>
+        {order.registrerad?.datumRegistrerad && (
+          <span className="uk-text-meta">
+            {order.registrerad.datumRegistrerad}
+          </span>
+        )}
+      </div>
+
+      {order.information?.beskrivning && (
+        <p className="uk-text-small uk-margin-small-top" style={{
+          display: '-webkit-box',
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden'
+        }}>
+          {order.information.beskrivning}
+        </p>
+      )}
+
+      <div className="uk-margin-small-top uk-text-meta">
+        {order.arbetsorderTyp?.arbetsordertypKod && (
+          <span className="uk-margin-small-right">
+            {order.arbetsorderTyp.arbetsordertypKod === 'F' ? 'Felanmälan' : 'Beställning'}
+          </span>
+        )}
+        {order.anmalare?.namn && (
+          <span>
+            • Anmälare: {order.anmalare.namn}
+          </span>
+        )}
+      </div>
+
+      {order.objekt?.objektNamn && (
+        <div className="uk-text-meta uk-margin-small-top">
+          📍 {order.objekt.objektNamn}
+        </div>
+      )}
+
+      <div className="uk-text-right uk-margin-small-top">
+        <button
+          className="uk-button uk-button-primary uk-button-small"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOrderClick(order);
+          }}
+          aria-label={`Visa detaljer för ärende ${order.id}`}
+        >
+          Visa detaljer
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="uk-card uk-card-default uk-card-body">
-      <h2 className="uk-margin">Pågående ärenden</h2>
+      <h2 className="uk-margin">Ärenden</h2>
 
-      {!selectedObjekt && (
-        <div className="uk-text-center uk-padding uk-text-muted">
-          <p>Välj en fastighet för att se pågående ärenden</p>
-        </div>
-      )}
+      {/* Tab Navigation */}
+      <ul className="uk-tab uk-margin">
+        <li className={activeTab === 'ongoing' ? 'uk-active' : ''}>
+          <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('ongoing'); }}>
+            Pågående ärenden
+          </a>
+        </li>
+        <li className={activeTab === 'my' ? 'uk-active' : ''}>
+          <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('my'); }}>
+            Mina ärenden
+          </a>
+        </li>
+      </ul>
 
-      {selectedObjekt && workOrders.length === 0 && (
-        <div className="uk-text-center uk-padding uk-text-muted">
-          <p>Inga pågående ärenden för {selectedObjekt.namn}</p>
-        </div>
-      )}
-
-      {selectedObjekt && workOrders.length > 0 && (
-        <div>
-          <p className="uk-text-small uk-text-muted uk-margin">
-            {workOrders.length} ärende{workOrders.length !== 1 ? 'n' : ''} för <strong>{selectedObjekt.namn}</strong>
-          </p>
-
-          {workOrders.map((order) => (
-            <div
-              key={order.id}
-              className="uk-card uk-card-default uk-card-body uk-card-hover uk-margin"
-              onClick={() => handleOrderClick(order)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="uk-flex uk-flex-between uk-flex-top uk-margin-small-bottom">
-                <div>
-                  <span className="uk-text-bold">
-                    #{order.id}
-                  </span>
-                  {order.status?.statusKod && (
-                    <span className={`uk-margin-small-left ${getStatusColor(order.status.statusKod)}`}>
-                      {getStatusText(order.status.statusKod)}
-                    </span>
-                  )}
-                </div>
-                {order.registrerad?.datumRegistrerad && (
-                  <span className="uk-text-meta">
-                    {order.registrerad.datumRegistrerad}
-                  </span>
-                )}
+      {/* Tab Content */}
+      <div>
+        {/* Ongoing Work Orders Tab */}
+        {activeTab === 'ongoing' && (
+          <div>
+            {!selectedObjekt && (
+              <div className="uk-text-center uk-padding uk-text-muted">
+                <p>Välj en fastighet för att se pågående ärenden</p>
               </div>
+            )}
 
-              {order.information?.beskrivning && (
-                <p className="uk-text-small uk-margin-small-top" style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 3,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
-                }}>
-                  {order.information.beskrivning}
+            {selectedObjekt && workOrders.length === 0 && (
+              <div className="uk-text-center uk-padding uk-text-muted">
+                <p>Inga pågående ärenden för {selectedObjekt.namn}</p>
+              </div>
+            )}
+
+            {selectedObjekt && workOrders.length > 0 && (
+              <div>
+                <p className="uk-text-small uk-text-muted uk-margin">
+                  {workOrders.length} ärende{workOrders.length !== 1 ? 'n' : ''} för <strong>{selectedObjekt.namn}</strong>
                 </p>
-              )}
 
-              <div className="uk-margin-small-top uk-text-meta">
-                {order.arbetsorderTyp?.arbetsordertypKod && (
-                  <span className="uk-margin-small-right">
-                    {order.arbetsorderTyp.arbetsordertypKod === 'F' ? 'Felanmälan' : 'Beställning'}
-                  </span>
-                )}
-                {order.anmalare?.namn && (
-                  <span>
-                    • Anmälare: {order.anmalare.namn}
-                  </span>
-                )}
+                {workOrders.map(renderWorkOrderCard)}
               </div>
+            )}
+          </div>
+        )}
 
-              <div className="uk-text-right uk-margin-small-top">
-                <button
-                  className="uk-button uk-button-primary uk-button-small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleOrderClick(order);
-                  }}
-                  aria-label={`Visa detaljer för ärende ${order.id}`}
-                >
-                  Visa detaljer
-                </button>
+        {/* My Work Orders Tab */}
+        {activeTab === 'my' && (
+          <div>
+            {myWorkOrders.length === 0 && (
+              <div className="uk-text-center uk-padding uk-text-muted">
+                <p>Du har inga registrerade ärenden</p>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            )}
+
+            {myWorkOrders.length > 0 && (
+              <div>
+                <p className="uk-text-small uk-text-muted uk-margin">
+                  {myWorkOrders.length} ärende{myWorkOrders.length !== 1 ? 'n' : ''} totalt
+                </p>
+
+                {myWorkOrders.map(renderWorkOrderCard)}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Modal for work order details */}
       {selectedOrder && (

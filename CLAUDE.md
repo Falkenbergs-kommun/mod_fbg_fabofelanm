@@ -19,7 +19,9 @@ This is a Joomla module (`mod_fbg_fabofelanm`) that provides a fault reporting (
    - Handles all FAST2 API authentication
    - Proxies React requests to FAST2 API
    - Filters confidential work orders server-side
-   - Endpoint: `index.php?option=com_ajax&module=fbg_fabofelanm&method=proxy`
+   - Endpoints:
+     - Proxy: `index.php?option=com_ajax&module=fbg_fabofelanm&method=proxy`
+     - My Work Orders: `index.php?option=com_ajax&module=fbg_fabofelanm&method=myWorkOrders`
 
 3. **External API**: FAST2 API
    - Requires two-tier authentication:
@@ -111,15 +113,16 @@ Enable API logging in module settings (`enable_logging` parameter) to log work o
 
 - `mod_fbg_fabofelanm.php` - Module entry point
 - `mod_fbg_fabofelanm.xml` - Joomla manifest with module configuration fields
-- `helper.php` - BFF logic, AJAX handlers, user data retrieval
+- `helper.php` - BFF logic, AJAX handlers, user data retrieval, user work orders endpoint
 - `tmpl/default.php` - Template that renders widget container
 - `lib/ProxyToRealApi.php` - Main proxy with two-tier auth coordination
 - `lib/OAuth2Client.php` - OAuth2 client credentials flow (WSO2 gateway)
 - `lib/ApiAuthClient.php` - Username/password login for FAST2 API token
 - `lib/ApiLogger.php` - Optional request logger for work orders and files
-- `widget-build/src/FelanmalanWidget.jsx` - Main React widget component
+- `widget-build/src/FelanmalanWidget.jsx` - Main React widget component with two-tab UI
 - `widget-build/src/apiClient.jsx` - Joomla AJAX client wrapper
 - `widget-build/src/components/ReportForm.jsx` - Form with property/space/unit selection
+- `widget-build/src/components/ReportStatus.jsx` - Two-tab display: "Pågående ärenden" and "Mina ärenden"
 - `widget-build/vite.config.js` - Vite build configuration (UMD format, outputs to `../assets/js`)
 
 ## Module Parameters
@@ -170,6 +173,28 @@ Handled as multipart/form-data in `helper.php::proxyAjax()`:
 - Converts PHP uploaded files to `CURLFile` objects
 - Proxied with appropriate Content-Type
 - Logged if logging enabled
+
+### User Work Orders Tracking
+
+Work orders created by users are tracked in the local database table `fbg_fabo_felanm`:
+- **Table**: `fbg_fabo_felanm` (no Joomla prefix)
+  - `id` - Work order ID from FAST2 API
+  - `user` - Joomla user ID
+- Saved automatically after successful work order creation in `helper.php::saveWorkOrderToLocalDb()`
+- Retrieved via `helper.php::myWorkOrdersAjax()` endpoint
+- Powers the "Mina ärenden" tab in the widget
+
+### Two-Tab Widget UI
+
+The widget right column displays two tabs:
+1. **"Pågående ärenden"** - Shows work orders for selected property (filtered by objektId)
+2. **"Mina ärenden"** - Shows all work orders created by current user (filtered by user ID)
+
+Both tabs:
+- Share the same work order card UI
+- Use the same modal for detailed view
+- Auto-reload when new work orders are created
+- Filter out confidential work orders (externtNr: "CONFIDENTIAL")
 
 ## Requirements
 

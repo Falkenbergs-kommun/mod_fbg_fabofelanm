@@ -140,6 +140,40 @@ class ApiClient {
     return Array.isArray(data) ? data : [];
   }
 
+  // List work orders created by current user
+  async listMyWorkOrders() {
+    const url = new URL(this.apiEndpoint);
+    url.searchParams.set('method', 'myWorkOrders');
+
+    try {
+      const response = await fetch(url.toString(), {
+        method: 'POST',
+        credentials: 'same-origin' // Include cookies for session
+      });
+
+      if (!response.ok) {
+        console.error('HTTP error:', response.status, response.statusText);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('myWorkOrders response:', result);
+
+      if (!result.success) {
+        console.error('API error:', result.error || result.message);
+        throw new Error(result.error || result.message || 'Failed to fetch user work orders');
+      }
+
+      // Handle Joomla AJAX double-wrapping: result.data.data
+      const workOrders = result.data?.data || result.data || [];
+      return Array.isArray(workOrders) ? workOrders : [];
+    } catch (error) {
+      console.error('Error in listMyWorkOrders:', error);
+      // Return empty array instead of throwing to prevent widget from breaking
+      return [];
+    }
+  }
+
   // List objekt (properties)
   async listObjekt() {
     const response = await this.request('/ao-produkt/v1/fastastrukturen/objekt/felanmalningsbara/uthyrningsbara', 'POST', {

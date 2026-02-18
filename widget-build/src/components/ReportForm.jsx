@@ -3,7 +3,7 @@ import Combobox from './Combobox';
 import { useApiClient } from '../apiClient.jsx';
 import { getAddressString } from '../lib/fastaStrukturenStore';
 
-export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObjektSelected }) {
+export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObjektSelected, onWorkOrderCreated }) {
   const apiClient = useApiClient();
 
   // State
@@ -510,6 +510,11 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
         loadWorkOrdersForObject(currentObjektId);
       }
 
+      // Reload user's work orders to update "Mina ärenden" tab
+      if (onWorkOrderCreated) {
+        onWorkOrderCreated();
+      }
+
       // Reset form after 5 seconds but keep objekt selected
       setTimeout(() => {
         // Reset all fields except objekt
@@ -537,6 +542,11 @@ export default function ReportForm({ userData, kundNr, onWorkOrdersLoaded, onObj
         setSelectedObjekt(currentObjekt);
         if (currentObjektId) {
           loadWorkOrdersForObject(currentObjektId);
+        }
+
+        // Reload user's work orders again
+        if (onWorkOrderCreated) {
+          onWorkOrderCreated();
         }
 
         // Clear success message
